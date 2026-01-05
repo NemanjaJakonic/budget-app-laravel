@@ -41,10 +41,10 @@ new class extends Component {
 }; ?>
 
 <section class="w-full">
-    <div class="mx-auto w-full max-w-xl p-4">
+    <div class="mx-auto w-full max-w-xl">
         <h1 class="pb-4 text-center text-lg font-bold text-white">Budget Profile</h1>
 
-        <form wire:submit="save" class="rounded-xl bg-zinc-800/40 p-6 space-y-6">
+        <form wire:submit="save" class="rounded-xl bg-zinc-800/40 space-y-6">
             @if (session('message'))
                 <div class="rounded bg-emerald-500/20 p-3 text-sm text-emerald-400">
                     {{ session('message') }}

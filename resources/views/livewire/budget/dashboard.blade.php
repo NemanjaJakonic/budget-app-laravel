@@ -107,7 +107,7 @@ new class extends Component {
 }; ?>
 
 <section class="w-full">
-    <div class="mx-auto w-full max-w-4xl p-4 space-y-6">
+    <div class="mx-auto w-full max-w-4xl space-y-6">
         {{-- Total Balance Card --}}
         <div class="rounded-xl bg-zinc-800/40 p-4">
             <p class="pb-2 text-xs font-semibold uppercase text-zinc-400">Total Balance</p>
