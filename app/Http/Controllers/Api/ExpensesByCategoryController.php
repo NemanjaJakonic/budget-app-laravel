@@ -148,9 +148,9 @@ class ExpensesByCategoryController extends Controller
                 return null;
             }
 
-            $userId = $request->query('user_id') ?? config('services.budget_api.user_id');
-            if ($userId) {
-                return User::find($userId);
+            $email = $request->query('email');
+            if ($email) {
+                return User::where('email', $email)->first();
             }
 
             return null;

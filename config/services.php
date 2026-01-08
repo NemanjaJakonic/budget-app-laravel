@@ -40,8 +40,7 @@ return [
     ],
 
     'budget_api' => [
-        'key' => env('BUDGET_API_KEY'),
-        'user_id' => env('BUDGET_API_USER_ID'),
+        'key' => env('BUDGET_API_KEY')
     ],
 
 ];
