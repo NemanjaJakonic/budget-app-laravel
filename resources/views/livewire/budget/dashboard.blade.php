@@ -35,7 +35,9 @@ new class extends Component {
                 $this->totalBalanceRSD -= $amountInRsd;
             }
         }
-        dd($this->totalBalanceRSD);
+        var_dump($profile->starting_balance);
+        var_dump($this->totalBalanceRSD);
+        die();
         $this->totalBalanceEUR = $this->totalBalanceRSD / $this->rates['RSD'];
 
         // Calculate current month savings
