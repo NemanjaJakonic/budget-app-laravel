@@ -84,7 +84,7 @@ new class extends Component {
 }; ?>
 
 <section class="w-full">
-    <div class="mx-auto w-full max-w-4xl p-4">
+    <div class="mx-auto w-full max-w-4xl py-4">
         <h1 class="pb-4 text-center text-lg font-bold text-white">Savings</h1>
 
         {{-- Year Selector --}}
@@ -97,7 +97,7 @@ new class extends Component {
         </div>
 
         {{-- Yearly Summary --}}
-        <div class="mb-6 rounded-xl bg-zinc-800/40 p-4">
+        <div class="mb-6 rounded-xl bg-zinc-800/40 py-4">
             <h2 class="mb-4 text-base font-semibold text-white">Yearly Summary - {{ $selectedYear }}</h2>
             <div class="grid grid-cols-3 gap-4">
                 <div class="rounded-lg bg-emerald-500/10 p-3">
@@ -122,7 +122,7 @@ new class extends Component {
         </div>
 
         {{-- Monthly Breakdown --}}
-        <div class="rounded-xl bg-zinc-800/40 p-4">
+        <div class="rounded-xl bg-zinc-800/40 py-4">
             <h2 class="mb-4 text-base font-semibold text-white">Monthly Breakdown</h2>
             <div class="grid gap-4 md:grid-cols-2">
                 @foreach ($this->getMonths() as $index => $month)

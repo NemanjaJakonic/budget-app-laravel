@@ -117,22 +117,21 @@ new class extends Component {
                     @enderror
                 </div>
             @endif
-
             {{-- Amount and Currency --}}
             <div class="flex gap-4">
                 <div class="w-2/3">
                     <flux:input 
                         wire:model="amount" 
                         :label="__('Amount')" 
-                        type="number"
-                        step="0.01"
-                        min="0"
+                        type="text"
                         placeholder="0.00"
+                        x-mask:dynamic="$money($input)"
                     />
                     @error('amount')
                         <span class="text-xs text-red-400">{{ $message }}</span>
                     @enderror
                 </div>
+               
                 <div class="w-1/3">
                     <flux:select wire:model="currency" :label="__('Currency')">
                         @foreach (Transaction::CURRENCIES as $curr)

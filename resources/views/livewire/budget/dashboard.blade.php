@@ -109,7 +109,7 @@ new class extends Component {
 <section class="w-full">
     <div class="mx-auto w-full max-w-4xl space-y-6">
         {{-- Total Balance Card --}}
-        <div class="rounded-xl bg-zinc-800/40 p-4">
+        <div class="rounded-xl bg-zinc-800/40 py-4">
             <p class="pb-2 text-xs font-semibold uppercase text-zinc-400">Total Balance</p>
             <h2 class="text-2xl font-extrabold uppercase text-white">
                 {{ CurrencyHelper::toRSD($totalBalanceRSD) }}
@@ -120,7 +120,7 @@ new class extends Component {
         </div>
 
         {{-- Monthly Savings --}}
-        <div class="rounded-xl bg-zinc-800/40 p-4">
+        <div class="rounded-xl bg-zinc-800/40 py-4">
             <p class="pb-2 text-sm text-zinc-300">
                 {{ now()->format('F') }} Savings:
                 <span class="font-bold text-emerald-400">{{ CurrencyHelper::toEUR($currentMonthSavingsEUR) }}</span>
@@ -137,7 +137,7 @@ new class extends Component {
         </div>
 
         {{-- Monthly Chart --}}
-        <div class="rounded-xl bg-zinc-800/40 p-4">
+        <div class="rounded-xl bg-zinc-800/40 py-4">
             <div class="flex justify-center gap-4 pb-4">
                 <div class="flex items-center gap-2">
                     <span class="block h-3 w-12 rounded bg-emerald-500"></span>
@@ -156,7 +156,7 @@ new class extends Component {
             <h3 class="pb-4 text-center text-sm font-bold text-white">Recent Transactions</h3>
             <div class="space-y-3">
                 @forelse ($recentTransactions as $transaction)
-                    <div class="flex items-center gap-4 rounded-xl bg-zinc-800/40 p-4">
+                    <div class="flex items-center gap-4 rounded-xl bg-zinc-800/40 py-4">
                         <div class="flex-1">
                             <a href="{{ route('transactions.edit', $transaction['id']) }}" class="text-sm text-white hover:text-emerald-400" wire:navigate>
                                 {{ $transaction['name'] }}

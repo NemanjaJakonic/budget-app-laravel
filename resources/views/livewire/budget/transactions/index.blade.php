@@ -94,7 +94,7 @@ new class extends Component {
 }; ?>
 
 <section class="w-full">
-    <div class="mx-auto w-full max-w-4xl p-4">
+    <div class="mx-auto w-full max-w-4xl py-4">
         <div class="flex items-center justify-between pb-4">
             <h1 class="text-lg font-bold text-white">All Transactions</h1>
             <a href="{{ route('api.export-transactions') }}" class="flex items-center gap-2 rounded bg-emerald-500 px-4 py-2 text-sm text-white transition-colors hover:bg-emerald-600">
