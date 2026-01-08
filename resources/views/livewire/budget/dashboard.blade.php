@@ -35,6 +35,7 @@ new class extends Component {
                 $this->totalBalanceRSD -= $amountInRsd;
             }
         }
+       
         $this->totalBalanceEUR = $this->totalBalanceRSD / $this->rates['RSD'];
 
         // Calculate current month savings
@@ -197,18 +198,26 @@ new class extends Component {
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
-        document.addEventListener('livewire:navigated', function() {
-            initChart();
-        });
-        document.addEventListener('DOMContentLoaded', function() {
-            initChart();
-        });
         function initChart() {
+            // Wait for Chart.js to be available
+            if (typeof Chart === 'undefined') {
+                setTimeout(initChart, 100);
+                return;
+            }
+
             const ctx = document.getElementById('monthlyChart');
-            if (ctx && !ctx.chart) {
-                ctx.chart = new Chart(ctx, {
+            if (!ctx) {
+                return;
+            }
+
+            // Destroy existing chart if it exists
+            if (ctx.chart) {
+                ctx.chart.destroy();
+                ctx.chart = null;
+            }
+
+            ctx.chart = new Chart(ctx, {
                     type: 'bar',
                     data: {
                         labels: @json($monthlyData['labels']),
@@ -249,5 +258,12 @@ new class extends Component {
                 });
             }
         }
+
+        document.addEventListener('livewire:navigated', function() {
+            initChart();
+        });
+        document.addEventListener('DOMContentLoaded', function() {
+            initChart();
+        });
     </script>
 </section>
