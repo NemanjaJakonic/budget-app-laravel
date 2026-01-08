@@ -207,17 +207,8 @@ new class extends Component {
             }
 
             const ctx = document.getElementById('monthlyChart');
-            if (!ctx) {
-                return;
-            }
-
-            // Destroy existing chart if it exists
-            if (ctx.chart) {
-                ctx.chart.destroy();
-                ctx.chart = null;
-            }
-
-            ctx.chart = new Chart(ctx, {
+            if (ctx && !ctx.chart) {
+                ctx.chart = new Chart(ctx, {
                     type: 'bar',
                     data: {
                         labels: @json($monthlyData['labels']),
