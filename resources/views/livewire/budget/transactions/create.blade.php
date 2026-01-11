@@ -125,7 +125,7 @@ new class extends Component {
                         :label="__('Amount')" 
                         type="text"
                         placeholder="0.00"
-                        x-mask:dynamic="$money($input)"
+                        x-mask:dynamic="$money($input, '.', '')"
                     />
                     @error('amount')
                         <span class="text-xs text-red-400">{{ $message }}</span>

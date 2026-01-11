@@ -140,6 +140,7 @@ class ExpensesByCategoryController extends Controller
     private function getAuthenticatedUser(Request $request): ?User
     {
         // Check for API key authentication
+        
         $apiKey = $request->header('X-API-Key') ?? str_replace('Bearer ', '', $request->header('Authorization') ?? '');
 
         if ($apiKey) {
@@ -149,6 +150,7 @@ class ExpensesByCategoryController extends Controller
             }
 
             $email = $request->query('email');
+           
             if ($email) {
                 return User::where('email', $email)->first();
             }
