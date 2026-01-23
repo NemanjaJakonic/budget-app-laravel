@@ -119,7 +119,7 @@ new class extends Component {
         </div>
 
         {{-- Transactions List --}}
-        <div class="space-y-3">
+        <div class="space-y-3" wire:transition>
             @forelse ($this->getTransactions() as $transaction)
                 <div class="flex items-center gap-4 rounded-xl bg-zinc-800/40 p-4">
                     <div class="flex-1">
