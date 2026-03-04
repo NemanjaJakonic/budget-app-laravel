@@ -74,11 +74,16 @@ new class extends Component {
             }
         }
 
-        $this->monthlyData = [
-            'labels' => ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-            'income' => array_column($monthlyTotals, 'income'),
-            'expenses' => array_column($monthlyTotals, 'expenses'),
-        ];
+        $labels = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+        $this->monthlyData = array_values(array_map(
+            fn ($index, $totals) => [
+                'month' => $labels[$index],
+                'income' => $totals['income'],
+                'expenses' => $totals['expenses'],
+            ],
+            array_keys($monthlyTotals),
+            $monthlyTotals
+        ));
 
         // Recent transactions
         $this->recentTransactions = $transactions->take(3)->map(fn($t) => [
@@ -139,17 +144,38 @@ new class extends Component {
 
         {{-- Monthly Chart --}}
         <div class="rounded-xl bg-zinc-800/40 py-4">
-            <div class="flex justify-center gap-4 pb-4">
-                <div class="flex items-center gap-2">
-                    <span class="block h-3 w-12 rounded bg-emerald-500"></span>
-                    <span class="text-sm text-zinc-400">Income</span>
+            <flux:chart wire:model="monthlyData">
+                <flux:chart.viewport class="aspect-[3/1]">
+                    <flux:chart.svg>
+                        <flux:chart.group>
+                            <flux:chart.bar field="income" class="text-emerald-500" />
+                            <flux:chart.bar field="expenses" class="text-red-500" />
+                        </flux:chart.group>
+                        <flux:chart.axis axis="x" field="month">
+                            <flux:chart.axis.tick />
+                            <flux:chart.axis.line />
+                        </flux:chart.axis>
+                        <flux:chart.axis axis="y">
+                            <flux:chart.axis.grid class="text-zinc-700" />
+                            <flux:chart.axis.tick class="text-zinc-400" />
+                        </flux:chart.axis>
+                        <flux:chart.cursor />
+                    </flux:chart.svg>
+                </flux:chart.viewport>
+                <div class="flex justify-center gap-4 pt-4">
+                    <flux:chart.legend label="Income">
+                        <flux:chart.legend.indicator class="bg-emerald-500" />
+                    </flux:chart.legend>
+                    <flux:chart.legend label="Expense">
+                        <flux:chart.legend.indicator class="bg-red-500" />
+                    </flux:chart.legend>
                 </div>
-                <div class="flex items-center gap-2">
-                    <span class="block h-3 w-12 rounded bg-red-500"></span>
-                    <span class="text-sm text-zinc-400">Expense</span>
-                </div>
-            </div>
-            <canvas id="monthlyChart" wire:ignore></canvas>
+                <flux:chart.tooltip>
+                    <flux:chart.tooltip.heading field="month" />
+                    <flux:chart.tooltip.value field="income" label="Income" />
+                    <flux:chart.tooltip.value field="expenses" label="Expenses" />
+                </flux:chart.tooltip>
+            </flux:chart>
         </div>
 
         {{-- Recent Transactions --}}
@@ -198,63 +224,4 @@ new class extends Component {
         </div>
     </div>
 
-    <script>
-        function initChart() {
-            // Wait for Chart.js to be available
-            if (typeof Chart === 'undefined') {
-                setTimeout(initChart, 100);
-                return;
-            }
-
-            const ctx = document.getElementById('monthlyChart');
-            if (ctx && !ctx.chart) {
-                ctx.chart = new Chart(ctx, {
-                    type: 'bar',
-                    data: {
-                        labels: @json($monthlyData['labels']),
-                        datasets: [
-                            {
-                                label: 'Income',
-                                data: @json($monthlyData['income']),
-                                backgroundColor: '#10b981',
-                                borderRadius: 4,
-                                borderSkipped: false
-                            },
-                            {
-                                label: 'Expenses',
-                                data: @json($monthlyData['expenses']),
-                                backgroundColor: '#ef4444',
-                                borderRadius: 4,
-                                borderSkipped: false
-                            }
-                        ]
-                    },
-                    options: {
-                        responsive: true,
-                        scales: {
-                            y: {
-                                beginAtZero: true,
-                                ticks: { color: '#9ca3af' },
-                                grid: { color: '#374151' }
-                            },
-                            x: {
-                                ticks: { color: '#9ca3af' },
-                                grid: { color: '#374151' }
-                            }
-                        },
-                        plugins: {
-                            legend: { display: false }
-                        }
-                    }
-                });
-            }
-        }
-
-        document.addEventListener('livewire:navigated', function() {
-            initChart();
-        });
-        document.addEventListener('DOMContentLoaded', function() {
-            initChart();
-        });
-    </script>
 </section>

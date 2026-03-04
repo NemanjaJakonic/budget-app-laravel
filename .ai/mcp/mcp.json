@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "laravel-boost": {
+      "command": "wsl.exe",
+      "args": [
+        "/usr/bin/php8.4",
+        "/home/nemanja/projects/budget-app-sveltekit/cha-ching-chronicles/artisan",
+        "boost:mcp"
+      ]
+    }
+  }
+}
