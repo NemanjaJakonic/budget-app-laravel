@@ -15,6 +15,7 @@ new class extends Component {
     public array $rates = [];
     public array $recentTransactions = [];
     public array $monthlyData = [];
+    public array $mobileMonthlyData = [];
 
     public function mount(): void
     {
@@ -85,6 +86,11 @@ new class extends Component {
             $monthlyTotals
         ));
 
+        $currentMonthIndex = now()->month - 1;
+        $startIndex = max(0, $currentMonthIndex - 2);
+        $endIndex = min(11, $currentMonthIndex + 2);
+        $this->mobileMonthlyData = array_values(array_slice($this->monthlyData, $startIndex, $endIndex - $startIndex + 1));
+
         // Recent transactions
         $this->recentTransactions = $transactions->take(3)->map(fn($t) => [
             'id' => $t->id,
@@ -144,7 +150,8 @@ new class extends Component {
 
         {{-- Monthly Chart --}}
         <div class="rounded-xl bg-zinc-800/40 py-4">
-            <flux:chart wire:model="monthlyData">
+            {{-- Mobile: 5-month view --}}
+            <flux:chart wire:model="mobileMonthlyData" class="sm:hidden">
                 <flux:chart.viewport class="aspect-[3/1]">
                     <flux:chart.svg>
                         <flux:chart.group>
@@ -172,8 +179,42 @@ new class extends Component {
                 </div>
                 <flux:chart.tooltip>
                     <flux:chart.tooltip.heading field="month" />
-                    <flux:chart.tooltip.value field="income" label="Income" />
-                    <flux:chart.tooltip.value field="expenses" label="Expenses" />
+                    <flux:chart.tooltip.value field="income" label="Income" :format="['style' => 'decimal', 'maximumFractionDigits' => 0]" suffix=" RSD" />
+                    <flux:chart.tooltip.value field="expenses" label="Expenses" :format="['style' => 'decimal', 'maximumFractionDigits' => 0]" suffix=" RSD" />
+                </flux:chart.tooltip>
+            </flux:chart>
+
+            {{-- Desktop: full 12-month view --}}
+            <flux:chart wire:model="monthlyData" class="hidden sm:block">
+                <flux:chart.viewport class="aspect-[3/1]">
+                    <flux:chart.svg>
+                        <flux:chart.group>
+                            <flux:chart.bar field="income" class="text-emerald-500" />
+                            <flux:chart.bar field="expenses" class="text-red-500" />
+                        </flux:chart.group>
+                        <flux:chart.axis axis="x" field="month">
+                            <flux:chart.axis.tick />
+                            <flux:chart.axis.line />
+                        </flux:chart.axis>
+                        <flux:chart.axis axis="y">
+                            <flux:chart.axis.grid class="text-zinc-700" />
+                            <flux:chart.axis.tick class="text-zinc-400" />
+                        </flux:chart.axis>
+                        <flux:chart.cursor />
+                    </flux:chart.svg>
+                </flux:chart.viewport>
+                <div class="flex justify-center gap-4 pt-4">
+                    <flux:chart.legend label="Income">
+                        <flux:chart.legend.indicator class="bg-emerald-500" />
+                    </flux:chart.legend>
+                    <flux:chart.legend label="Expense">
+                        <flux:chart.legend.indicator class="bg-red-500" />
+                    </flux:chart.legend>
+                </div>
+                <flux:chart.tooltip>
+                    <flux:chart.tooltip.heading field="month" />
+                    <flux:chart.tooltip.value field="income" label="Income" :format="['style' => 'decimal', 'maximumFractionDigits' => 0]" suffix=" RSD" />
+                    <flux:chart.tooltip.value field="expenses" label="Expenses" :format="['style' => 'decimal', 'maximumFractionDigits' => 0]" suffix=" RSD" />
                 </flux:chart.tooltip>
             </flux:chart>
         </div>
@@ -183,7 +224,7 @@ new class extends Component {
             <h3 class="pb-4 text-center text-sm font-bold text-white">Recent Transactions</h3>
             <div class="space-y-3">
                 @forelse ($recentTransactions as $transaction)
-                    <div class="flex items-center gap-4 rounded-xl bg-zinc-800/40 py-4">
+                    <div class="flex items-center gap-4 rounded-xl bg-zinc-800/40 py-2">
                         <div class="flex-1">
                             <a href="{{ route('transactions.edit', $transaction['id']) }}" class="text-sm text-white hover:text-emerald-400" wire:navigate>
                                 {{ $transaction['name'] }}
@@ -197,7 +238,7 @@ new class extends Component {
                                 @endif
                             </p>
                         </div>
-                        <span class="flex-1 text-right text-sm font-semibold {{ $transaction['type'] === 'expense' ? 'text-red-400' : 'text-emerald-400' }}">
+                        <span class="flex-none text-right text-sm font-semibold {{ $transaction['type'] === 'expense' ? 'text-red-400' : 'text-emerald-400' }}">
                             {{ $transaction['type'] === 'expense' ? '-' : '' }}{{ $transaction['formatted_amount'] }}
                         </span>
                         <flux:dropdown position="bottom" align="end">

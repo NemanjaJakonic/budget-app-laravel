@@ -121,7 +121,7 @@ new class extends Component {
         {{-- Transactions List --}}
         <div class="space-y-3" wire:transition>
             @forelse ($this->getTransactions() as $transaction)
-                <div class="flex items-center gap-4 rounded-xl bg-zinc-800/40 p-4">
+                <div class="flex items-center gap-4 rounded-xl bg-zinc-800/40 py-2">
                     <div class="flex-1">
                         <a href="{{ route('transactions.edit', $transaction->id) }}" class="text-sm text-white hover:text-emerald-400" wire:navigate>
                             {{ $transaction->name }}
@@ -135,7 +135,7 @@ new class extends Component {
                             @endif
                         </p>
                     </div>
-                    <span class="flex-1 text-right text-sm font-semibold {{ $transaction->type === 'expense' ? 'text-red-400' : 'text-emerald-400' }}">
+                    <span class="flex-none text-right text-sm font-semibold {{ $transaction->type === 'expense' ? 'text-red-400' : 'text-emerald-400' }}">
                         {{ $transaction->type === 'expense' ? '-' : '' }}{{ CurrencyHelper::format($transaction->amount, $transaction->currency) }}
                     </span>
                     <flux:dropdown position="bottom" align="end">
