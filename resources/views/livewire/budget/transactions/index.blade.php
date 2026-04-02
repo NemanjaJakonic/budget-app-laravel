@@ -240,30 +240,9 @@ new class extends Component {
 
             {{-- Totals Summary (RSD) --}}
             @if ($transactions->isNotEmpty())
-                <div class="border-zinc-700/50 border-t pt-4">
-                    <h2 class="mb-3 text-sm font-semibold text-zinc-300">Summary (RSD)</h2>
-                    <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
-                        <div>
-                            <p class="text-xs text-zinc-500">Income</p>
-                            <p class="text-sm font-semibold text-emerald-400">
-                                {{ CurrencyHelper::toRSD($totals['incomeRsd']) }}
-                            </p>
-                        </div>
-
-                        <div>
-                            <p class="text-xs text-zinc-500">Expenses</p>
-                            <p class="text-sm font-semibold text-red-400">
-                                -{{ CurrencyHelper::toRSD($totals['expenseRsd']) }}
-                            </p>
-                        </div>
-
-                        <div>
-                            <p class="text-xs text-zinc-500">Net</p>
-                            <p class="text-sm font-semibold {{ $totals['netRsd'] >= 0 ? 'text-emerald-400' : 'text-red-400' }}">
-                                {{ $totals['netRsd'] < 0 ? '-' : '' }}{{ CurrencyHelper::toRSD(abs($totals['netRsd'])) }}
-                            </p>
-                        </div>
-                    </div>
+                <div class="border-zinc-700/50 border-t pt-4 flex items-center justify-between">
+                    <p class="text-sm font-semibold text-zinc-300">Summary (RSD)</p>
+                    <p class="text-sm font-semibold pr-12 {{ $totals['netRsd'] >= 0 ? 'text-emerald-400' : 'text-red-400' }}">{{ $totals['netRsd'] < 0 ? '-' : '' }}{{ CurrencyHelper::toRSD(abs($totals['netRsd'])) }}</p>
                 </div>
             @endif
         </div>
