@@ -2,6 +2,7 @@
 
 use App\Helpers\CurrencyHelper;
 use App\Models\Transaction;
+use App\Services\ExchangeRateService;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Volt\Component;
 
@@ -12,6 +13,9 @@ new class extends Component {
     public int $selectedMonth = 0;
     public int|string $selectedYear = 0;
     public int $perPage = 15;
+
+    /** @var array{RSD: float, EUR: float, USD: float} */
+    public array $rates = [];
 
     protected $queryString = [
         'selectedMonth' => ['as' => 'month'],
@@ -28,6 +32,7 @@ new class extends Component {
         $this->selectedType = request()->get('type', '');
         $this->selectedCategory = request()->get('category', '');
         $this->search = request()->get('q', '');
+        $this->rates = app(ExchangeRateService::class)->getRates();
     }
 
     public function getMonths(): array
@@ -132,7 +137,7 @@ new class extends Component {
     }
 
     /**
-     * @return array{income: array<string, float>, expense: array<string, float>, net: array<string, float>}
+     * @return array{incomeRsd: float, expenseRsd: float, netRsd: float}
      */
     public function getTotals(): array
     {
@@ -142,29 +147,26 @@ new class extends Component {
 
         $rows = $this->applyFilters($query)->get();
 
-        $income = [];
-        $expense = [];
+        $incomeRsd = 0.0;
+        $expenseRsd = 0.0;
 
         foreach ($rows as $row) {
+            $partial = new Transaction([
+                'amount' => $row->total,
+                'currency' => $row->currency,
+            ]);
+            $amountInRsd = $partial->getAmountInRsd($this->rates);
             if ($row->type === 'income') {
-                $income[$row->currency] = (float) $row->total;
+                $incomeRsd += $amountInRsd;
             } else {
-                $expense[$row->currency] = (float) $row->total;
+                $expenseRsd += $amountInRsd;
             }
         }
 
-        $currencies = array_unique(array_merge(array_keys($income), array_keys($expense)));
-        sort($currencies);
-
-        $net = [];
-        foreach ($currencies as $currency) {
-            $net[$currency] = ($income[$currency] ?? 0) - ($expense[$currency] ?? 0);
-        }
-
         return [
-            'income' => $income,
-            'expense' => $expense,
-            'net' => $net,
+            'incomeRsd' => $incomeRsd,
+            'expenseRsd' => $expenseRsd,
+            'netRsd' => $incomeRsd - $expenseRsd,
         ];
     }
 
@@ -184,58 +186,90 @@ new class extends Component {
             </a>
         </div>
 
-        {{-- Search --}}
-        <div class="pb-4">
-            <flux:input
-                wire:model.live.debounce.300ms="search"
-                placeholder="Search transactions..."
-                icon="magnifying-glass"
-                clearable
-            />
-        </div>
-
-        {{-- Filters --}}
-        <div class="flex flex-wrap gap-4 pb-4">
-            <div class="min-w-0 flex-1">
-                <flux:select wire:model.live="selectedType">
-                    <flux:select.option value="">All Types</flux:select.option>
-                    @foreach (Transaction::TYPES as $type)
-                        <flux:select.option value="{{ $type }}">{{ ucfirst($type) }}</flux:select.option>
-                    @endforeach
-                </flux:select>
-            </div>
-
-            <div class="min-w-0 flex-1">
-                <flux:select wire:model.live="selectedCategory">
-                    <flux:select.option value="">All Categories</flux:select.option>
-                    @foreach (Transaction::CATEGORY_LABELS as $value => $label)
-                        <flux:select.option value="{{ $value }}">{{ $label }}</flux:select.option>
-                    @endforeach
-                </flux:select>
-            </div>
-
-            <div class="min-w-0 flex-1">
-                <flux:select wire:model.live="selectedMonth">
-                    @foreach ($this->getMonths() as $value => $label)
-                        <flux:select.option value="{{ $value }}">{{ $label }}</flux:select.option>
-                    @endforeach
-                </flux:select>
-            </div>
-
-            <div class="min-w-0 flex-1">
-                <flux:select wire:model.live="selectedYear">
-                    @foreach ($this->getYears() as $value => $label)
-                        <flux:select.option value="{{ $value }}">{{ $label }}</flux:select.option>
-                    @endforeach
-                </flux:select>
-            </div>
-        </div>
-
         @php($transactions = $this->getTransactions())
         @php($totals = $this->getTotals())
 
+        {{-- Search, filters & summary (sticky while scrolling the list) --}}
+        <div class="sticky top-0 z-20 -mx-1 border-zinc-700/50 border-b bg-zinc-800/95 px-1 pb-4 backdrop-blur-sm">
+            {{-- Search --}}
+            <div class="pb-4">
+                <flux:input
+                    wire:model.live.debounce.300ms="search"
+                    placeholder="Search transactions..."
+                    icon="magnifying-glass"
+                    clearable
+                />
+            </div>
+
+            {{-- Filters --}}
+            <div class="flex flex-wrap gap-4 pb-4">
+                <div class="min-w-0 flex-1">
+                    <flux:select wire:model.live="selectedType">
+                        <flux:select.option value="">All Types</flux:select.option>
+                        @foreach (Transaction::TYPES as $type)
+                            <flux:select.option value="{{ $type }}">{{ ucfirst($type) }}</flux:select.option>
+                        @endforeach
+                    </flux:select>
+                </div>
+
+                <div class="min-w-0 flex-1">
+                    <flux:select wire:model.live="selectedCategory">
+                        <flux:select.option value="">All Categories</flux:select.option>
+                        @foreach (Transaction::CATEGORY_LABELS as $value => $label)
+                            <flux:select.option value="{{ $value }}">{{ $label }}</flux:select.option>
+                        @endforeach
+                    </flux:select>
+                </div>
+
+                <div class="min-w-0 flex-1">
+                    <flux:select wire:model.live="selectedMonth">
+                        @foreach ($this->getMonths() as $value => $label)
+                            <flux:select.option value="{{ $value }}">{{ $label }}</flux:select.option>
+                        @endforeach
+                    </flux:select>
+                </div>
+
+                <div class="min-w-0 flex-1">
+                    <flux:select wire:model.live="selectedYear">
+                        @foreach ($this->getYears() as $value => $label)
+                            <flux:select.option value="{{ $value }}">{{ $label }}</flux:select.option>
+                        @endforeach
+                    </flux:select>
+                </div>
+            </div>
+
+            {{-- Totals Summary (RSD) --}}
+            @if ($transactions->isNotEmpty())
+                <div class="border-zinc-700/50 border-t pt-4">
+                    <h2 class="mb-3 text-sm font-semibold text-zinc-300">Summary (RSD)</h2>
+                    <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
+                        <div>
+                            <p class="text-xs text-zinc-500">Income</p>
+                            <p class="text-sm font-semibold text-emerald-400">
+                                {{ CurrencyHelper::toRSD($totals['incomeRsd']) }}
+                            </p>
+                        </div>
+
+                        <div>
+                            <p class="text-xs text-zinc-500">Expenses</p>
+                            <p class="text-sm font-semibold text-red-400">
+                                -{{ CurrencyHelper::toRSD($totals['expenseRsd']) }}
+                            </p>
+                        </div>
+
+                        <div>
+                            <p class="text-xs text-zinc-500">Net</p>
+                            <p class="text-sm font-semibold {{ $totals['netRsd'] >= 0 ? 'text-emerald-400' : 'text-red-400' }}">
+                                {{ $totals['netRsd'] < 0 ? '-' : '' }}{{ CurrencyHelper::toRSD(abs($totals['netRsd'])) }}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            @endif
+        </div>
+
         {{-- Transactions List --}}
-        <div class="space-y-3">
+        <div class="space-y-3 pt-4">
             @forelse ($transactions as $transaction)
                 <div wire:key="txn-{{ $transaction->id }}" class="flex items-center gap-4 rounded-xl bg-zinc-800/40 py-2">
                     <div class="flex-1">
@@ -252,7 +286,7 @@ new class extends Component {
                         </p>
                     </div>
                     <span class="flex-none text-right text-sm font-semibold {{ $transaction->type === 'expense' ? 'text-red-400' : 'text-emerald-400' }}">
-                        {{ $transaction->type === 'expense' ? '-' : '' }}{{ CurrencyHelper::format($transaction->amount, $transaction->currency) }}
+                        {{ $transaction->type === 'expense' ? '-' : '' }}{{ CurrencyHelper::toRSD($transaction->getAmountInRsd($rates)) }}
                     </span>
                     <flux:dropdown position="bottom" align="end">
                         <flux:button variant="ghost" size="sm" icon="ellipsis-vertical" />
@@ -277,48 +311,6 @@ new class extends Component {
                 </div>
             @endforelse
         </div>
-
-        {{-- Totals Summary --}}
-        @if ($transactions->isNotEmpty())
-            <div class="mt-6 border-zinc-700/50 border-t-2 pt-4">
-                <h2 class="mb-3 text-sm font-semibold text-zinc-300">Summary</h2>
-                <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
-                    {{-- Income --}}
-                    <div>
-                        <p class="text-xs text-zinc-500">Income</p>
-                        @forelse ($totals['income'] as $currency => $amount)
-                            <p class="text-sm font-semibold text-emerald-400">
-                                {{ CurrencyHelper::format($amount, $currency) }}
-                            </p>
-                        @empty
-                            <p class="text-sm text-zinc-500">-</p>
-                        @endforelse
-                    </div>
-
-                    {{-- Expenses --}}
-                    <div>
-                        <p class="text-xs text-zinc-500">Expenses</p>
-                        @forelse ($totals['expense'] as $currency => $amount)
-                            <p class="text-sm font-semibold text-red-400">
-                                -{{ CurrencyHelper::format($amount, $currency) }}
-                            </p>
-                        @empty
-                            <p class="text-sm text-zinc-500">-</p>
-                        @endforelse
-                    </div>
-
-                    {{-- Net --}}
-                    <div>
-                        <p class="text-xs text-zinc-500">Net</p>
-                        @foreach ($totals['net'] as $currency => $amount)
-                            <p class="text-sm font-semibold {{ $amount >= 0 ? 'text-emerald-400' : 'text-red-400' }}">
-                                {{ $amount < 0 ? '-' : '' }}{{ CurrencyHelper::format(abs($amount), $currency) }}
-                            </p>
-                        @endforeach
-                    </div>
-                </div>
-            </div>
-        @endif
 
         {{-- Infinite Scroll Sentinel --}}
         @if ($transactions->hasMorePages())
