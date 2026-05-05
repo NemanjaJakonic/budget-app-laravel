@@ -69,7 +69,8 @@ new class extends Component {
     }
 }; ?>
 
-<x-layouts.app :title="__('Settings')"><div class="flex h-full w-full flex-1 flex-col gap-4 rounded-xl"><section class="w-full">
+<section class="w-full">
+    <div class="mx-auto w-full max-w-4xl space-y-6">
     @include('partials.settings-heading')
 
     <x-settings.layout :heading="__('Profile')" :subheading="__('Update your name and email address')">
@@ -113,4 +114,5 @@ new class extends Component {
 
         <livewire:settings.delete-user-form />
     </x-settings.layout>
+    </div>
 </section>
