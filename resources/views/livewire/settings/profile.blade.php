@@ -69,7 +69,7 @@ new class extends Component {
     }
 }; ?>
 
-<section class="w-full">
+<x-layouts.app :title="__('Settings')"><div class="flex h-full w-full flex-1 flex-col gap-4 rounded-xl"><section class="w-full">
     @include('partials.settings-heading')
 
     <x-settings.layout :heading="__('Profile')" :subheading="__('Update your name and email address')">
