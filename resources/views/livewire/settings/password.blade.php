@@ -35,7 +35,6 @@ new class extends Component {
         $this->dispatch('password-updated');
     }
 }; ?>
-
 <section class="w-full">
     <div class="mx-auto w-full max-w-4xl space-y-6">
         @include('partials.settings-heading')
