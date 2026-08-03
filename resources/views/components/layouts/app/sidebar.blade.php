@@ -81,7 +81,7 @@
         </flux:sidebar>
 
         <!-- Header -->
-        <flux:header>
+        <flux:header class="!px-2 lg:!px-2">
             <div class="mx-auto w-full max-w-4xl flex items-center">
                 <a href="{{ route('dashboard') }}" class="ms-2 flex items-center space-x-2 rtl:space-x-reverse lg:ms-0" wire:navigate>
                     <x-app-logo />
