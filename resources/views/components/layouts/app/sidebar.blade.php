@@ -134,9 +134,9 @@
             </div>
         </flux:header>
 
-        <div class="px-2 pb-16 pt-6 lg:py-8">
+        <flux:main class="!px-2 !pt-6 !pb-16 lg:!px-2 lg:!py-8">
             {{ $slot }}
-        </div>
+        </flux:main>
 
         <x-layouts.app.bottom-nav />
 
