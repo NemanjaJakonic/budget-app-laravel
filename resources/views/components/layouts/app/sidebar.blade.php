@@ -134,7 +134,7 @@
             </div>
         </flux:header>
 
-        <div class="pb-16">
+        <div class="px-2 pb-16 pt-6 lg:py-8">
             {{ $slot }}
         </div>
 
