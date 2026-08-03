@@ -82,9 +82,9 @@ new class extends Component {
 }; ?>
 
 <section class="w-full page-enter">
-    <div class="mx-auto w-full max-w-4xl px-4 py-4 sm:px-0">
+    <div class="mx-auto w-full max-w-4xl px-3 py-3 sm:px-0 sm:py-4">
         {{-- Header --}}
-        <div class="flex items-center justify-between pb-4">
+        <div class="flex items-center justify-between pb-3 sm:pb-4">
             <div>
                 <h1 class="text-xl font-semibold text-white">Savings</h1>
                 <p class="mt-0.5 text-sm text-zinc-500">Track your savings over time</p>
@@ -99,22 +99,22 @@ new class extends Component {
         </div>
 
         {{-- Yearly Summary --}}
-        <div class="card mb-5">
-            <p class="mb-4 text-sm font-medium text-zinc-300">{{ $selectedYear }} Summary</p>
-            <div class="grid grid-cols-3 gap-3">
-                <div class="rounded-lg bg-emerald-500/10 p-3">
+        <div class="card mb-3 sm:mb-5">
+            <p class="mb-3 text-sm font-medium text-zinc-300 sm:mb-4">{{ $selectedYear }} Summary</p>
+            <div class="grid grid-cols-3 gap-2 sm:gap-3">
+                <div class="rounded-lg bg-emerald-500/10 p-2 sm:p-3">
                     <p class="text-xs font-medium uppercase tracking-wider text-emerald-500">Income</p>
                     <p class="mt-1 text-lg font-bold tabular-nums text-emerald-400">
                         {{ CurrencyHelper::toEUR($yearlyTotal['income']) }}
                     </p>
                 </div>
-                <div class="rounded-lg bg-red-500/10 p-3">
+                <div class="rounded-lg bg-red-500/10 p-2 sm:p-3">
                     <p class="text-xs font-medium uppercase tracking-wider text-red-500">Expenses</p>
                     <p class="mt-1 text-lg font-bold tabular-nums text-red-400">
                         {{ CurrencyHelper::toEUR($yearlyTotal['expense']) }}
                     </p>
                 </div>
-                <div class="rounded-lg bg-blue-500/10 p-3">
+                <div class="rounded-lg bg-blue-500/10 p-2 sm:p-3">
                     <p class="text-xs font-medium uppercase tracking-wider text-blue-500">Savings</p>
                     <p class="mt-1 text-lg font-bold tabular-nums text-blue-400">
                         {{ CurrencyHelper::toEUR($yearlyTotal['savings']) }}
@@ -125,13 +125,13 @@ new class extends Component {
 
         {{-- Monthly Breakdown --}}
         <div class="card">
-            <p class="mb-4 text-sm font-medium text-zinc-300">Monthly Breakdown</p>
+            <p class="mb-3 text-sm font-medium text-zinc-300 sm:mb-4">Monthly Breakdown</p>
 
             @if (!empty($monthlyData))
-                <div class="grid gap-3 md:grid-cols-2">
+                <div class="grid gap-2 sm:gap-3 md:grid-cols-2">
                     @foreach ($this->getMonths() as $index => $month)
                         @if (isset($monthlyData[$index]))
-                            <div class="list-item-enter rounded-lg border border-zinc-700/40 bg-zinc-900/40 p-4" style="animation-delay: {{ $index * 30 }}ms">
+                            <div class="list-item-enter rounded-lg border border-zinc-700/40 bg-zinc-900/40 p-3 sm:p-4" style="animation-delay: {{ $index * 30 }}ms">
                                 <h3 class="mb-2.5 text-sm font-medium text-zinc-300">{{ $month }}</h3>
                                 <div class="space-y-1.5">
                                     <div class="flex items-center justify-between">

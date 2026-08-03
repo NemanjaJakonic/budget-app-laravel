@@ -177,9 +177,9 @@ new class extends Component {
 }; ?>
 
 <section class="w-full page-enter">
-    <div class="mx-auto w-full max-w-4xl px-4 py-4 sm:px-0">
+    <div class="mx-auto w-full max-w-4xl px-3 py-3 sm:px-0 sm:py-4">
         {{-- Header --}}
-        <div class="flex items-center justify-between pb-4">
+        <div class="flex items-center justify-between pb-3 sm:pb-4">
             <div>
                 <h1 class="text-xl font-semibold text-white">Transactions</h1>
                 <p class="mt-0.5 text-sm text-zinc-500">Manage your income and expenses</p>
@@ -193,7 +193,7 @@ new class extends Component {
         @php($totals = $this->getTotals())
 
         {{-- Search, filters & summary (sticky while scrolling the list) --}}
-        <div class="sticky top-0 z-20 -mx-1 border-b border-zinc-700/50 bg-zinc-800/95 px-1 pb-4 backdrop-blur-sm">
+        <div class="sticky top-0 z-20 -mx-1 border-b border-zinc-700/50 bg-zinc-800/95 px-1 pb-3 backdrop-blur-sm">
             {{-- Search --}}
             <div class="pb-3">
                 <flux:input
@@ -205,7 +205,7 @@ new class extends Component {
             </div>
 
             {{-- Filters --}}
-            <div class="flex flex-wrap gap-3 pb-3">
+            <div class="flex flex-wrap gap-2 pb-2.5 sm:gap-3 sm:pb-3">
                 <div class="min-w-0 flex-1">
                     <flux:select wire:model.live="selectedType">
                         <flux:select.option value="">All Types</flux:select.option>
@@ -256,7 +256,7 @@ new class extends Component {
         @if ($transactions->isNotEmpty())
             <div class="space-y-1 pt-3">
                 @foreach ($transactions as $transaction)
-                    <div wire:key="txn-{{ $transaction->id }}" class="list-item-enter group flex items-center gap-4 rounded-lg px-3 py-2.5 transition-colors hover:bg-zinc-700/40" style="animation-delay: {{ $loop->index * 30 }}ms">
+                    <div wire:key="txn-{{ $transaction->id }}" class="list-item-enter group flex items-center gap-3 rounded-lg px-2.5 py-2 transition-colors hover:bg-zinc-700/40 sm:gap-4 sm:px-3 sm:py-2.5" style="animation-delay: {{ $loop->index * 30 }}ms">
                         <div class="min-w-0 flex-1">
                             <a href="{{ route('transactions.edit', $transaction->id) }}" class="text-sm font-medium text-white transition-colors group-hover:text-emerald-400" wire:navigate>
                                 {{ $transaction->name }}
@@ -309,7 +309,7 @@ new class extends Component {
             <div
                 wire:key="load-more-{{ $this->perPage }}"
                 x-intersect="$wire.loadMore()"
-                class="flex justify-center py-6"
+                class="flex justify-center py-4 sm:py-6"
             >
                 <flux:icon.arrow-path class="size-5 animate-spin text-zinc-500" />
             </div>

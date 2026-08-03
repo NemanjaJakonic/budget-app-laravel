@@ -132,9 +132,9 @@ new class extends Component {
 }; ?>
 
 <section class="w-full page-enter">
-    <div class="mx-auto w-full max-w-xl px-4 sm:px-0">
+    <div class="mx-auto w-full max-w-xl px-3 sm:px-0">
         {{-- Header --}}
-        <div class="pb-5">
+        <div class="pb-3 sm:pb-5">
             <h1 class="text-xl font-semibold text-white">Add Transaction</h1>
             <p class="mt-0.5 text-sm text-zinc-500">Record a new income or expense</p>
         </div>
@@ -150,7 +150,7 @@ new class extends Component {
         {{-- Voice Input Section --}}
         @if ($inputMode === 'voice')
             <div 
-                class="card mb-5"
+                class="card mb-4 sm:mb-5"
                 x-data="{
                     isRecording: false,
                     transcript: @entangle('voiceTranscript'),
@@ -378,13 +378,13 @@ new class extends Component {
             </div>
         @endif
 
-        <form wire:submit="save" class="card space-y-5">
+        <form wire:submit="save" class="card space-y-4 sm:space-y-5">
             @if (session('message'))
                 <div class="toast-success">{{ session('message') }}</div>
             @endif
 
             {{-- Name and Type --}}
-            <div class="flex gap-4">
+            <div class="flex gap-3 sm:gap-4">
                 <div class="w-2/3">
                     <flux:input 
                         wire:model="name" 
@@ -423,7 +423,7 @@ new class extends Component {
             @endif
 
             {{-- Amount and Currency --}}
-            <div class="flex gap-4">
+            <div class="flex gap-3 sm:gap-4">
                 <div class="w-2/3">
                     <flux:input 
                         wire:model="amount" 

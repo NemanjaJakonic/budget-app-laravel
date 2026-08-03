@@ -119,9 +119,9 @@ new class extends Component {
 }; ?>
 
 <section class="w-full page-enter">
-    <div class="mx-auto w-full max-w-4xl space-y-5 px-4 sm:px-0">
+    <div class="mx-auto w-full max-w-4xl space-y-2.5 px-3 sm:space-y-5 sm:px-0">
         {{-- Page Header --}}
-        <div class="pt-2">
+        <div class="pt-1 sm:pt-2">
             <h1 class="text-xl font-semibold text-white">Dashboard</h1>
             <p class="mt-0.5 text-sm text-zinc-400">{{ now()->format('l, j F Y') }}</p>
         </div>
@@ -156,7 +156,7 @@ new class extends Component {
 
         {{-- Monthly Chart --}}
         <div class="card">
-            <p class="mb-4 text-sm font-medium text-zinc-300">Income vs Expenses</p>
+            <p class="mb-3 text-sm font-medium text-zinc-300 sm:mb-4">Income vs Expenses</p>
             {{-- Mobile: 5-month view --}}
             <flux:chart wire:model="mobileMonthlyData" class="sm:hidden">
                 <flux:chart.viewport class="aspect-[3/1]">
@@ -228,7 +228,7 @@ new class extends Component {
 
         {{-- Recent Transactions --}}
         <div class="card">
-            <div class="mb-4 flex items-baseline justify-between">
+            <div class="mb-3 flex items-baseline justify-between sm:mb-4">
                 <h2 class="text-sm font-medium text-zinc-300">Recent Transactions</h2>
                 @if (count($recentTransactions) > 0)
                     <flux:link href="{{ route('transactions.index') }}" wire:navigate class="text-xs">View all</flux:link>
@@ -238,7 +238,7 @@ new class extends Component {
             @if (count($recentTransactions) > 0)
                 <div class="space-y-1">
                     @foreach ($recentTransactions as $transaction)
-                        <div wire:key="recent-{{ $transaction['id'] }}" class="list-item-enter group flex items-center gap-4 rounded-lg px-3 py-2.5 transition-colors hover:bg-zinc-700/40" style="animation-delay: {{ $loop->index * 40 }}ms">
+                        <div wire:key="recent-{{ $transaction['id'] }}" class="list-item-enter group flex items-center gap-3 rounded-lg px-2.5 py-2 transition-colors hover:bg-zinc-700/40 sm:gap-4 sm:px-3 sm:py-2.5" style="animation-delay: {{ $loop->index * 40 }}ms">
                             <div class="min-w-0 flex-1">
                                 <a href="{{ route('transactions.edit', $transaction['id']) }}" class="text-sm font-medium text-white transition-colors group-hover:text-emerald-400" wire:navigate>
                                     {{ $transaction['name'] }}

@@ -41,14 +41,14 @@ new class extends Component {
 }; ?>
 
 <section class="w-full page-enter">
-    <div class="mx-auto w-full max-w-xl px-4 sm:px-0">
+    <div class="mx-auto w-full max-w-xl px-3 sm:px-0">
         {{-- Header --}}
-        <div class="pb-5">
+        <div class="pb-3 sm:pb-5">
             <h1 class="text-xl font-semibold text-white">Budget Profile</h1>
             <p class="mt-0.5 text-sm text-zinc-500">Set your starting balance for calculations</p>
         </div>
 
-        <form wire:submit="save" class="card space-y-5">
+        <form wire:submit="save" class="card space-y-4 sm:space-y-5">
             @if (session('message'))
                 <div class="toast-success">{{ session('message') }}</div>
             @endif
