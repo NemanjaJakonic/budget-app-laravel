@@ -8,7 +8,7 @@
             aria-label="Dashboard"
             @if(request()->routeIs('dashboard')) aria-current="page" @endif
         >
-            <flux:icon.home class="size-5" />
+            <x-icon name="home" class="size-5" />
             <span class="font-medium">{{ __('Dashboard') }}</span>
         </a>
 
@@ -20,7 +20,7 @@
             aria-label="Transactions"
             @if(request()->routeIs('transactions.index')) aria-current="page" @endif
         >
-            <flux:icon.banknotes class="size-5" />
+            <x-icon name="banknotes" class="size-5" />
             <span class="font-medium">{{ __('Transactions') }}</span>
         </a>
 
@@ -32,7 +32,7 @@
             aria-label="Add transaction"
             @if(request()->routeIs('transactions.create')) aria-current="page" @endif
         >
-            <flux:icon.plus-circle class="size-5" />
+            <x-icon name="plus-circle" class="size-5" />
             <span class="font-medium">{{ __('Add') }}</span>
         </a>
 
@@ -44,7 +44,7 @@
             aria-label="Savings"
             @if(request()->routeIs('savings')) aria-current="page" @endif
         >
-            <flux:icon.chart-bar class="size-5" />
+            <x-icon name="chart-bar" class="size-5" />
             <span class="font-medium">{{ __('Savings') }}</span>
         </a>
 
@@ -56,7 +56,7 @@
             aria-label="Profile"
             @if(request()->routeIs('budget-profile')) aria-current="page" @endif
         >
-            <flux:icon.user class="size-5" />
+            <x-icon name="user" class="size-5" />
             <span class="font-medium">{{ __('Profile') }}</span>
         </a>
     </div>

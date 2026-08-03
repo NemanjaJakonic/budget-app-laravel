@@ -54,9 +54,9 @@ new class extends Component {
             @endif
 
             <div>
-                <flux:input 
+                <x-form.input 
                     wire:model="starting_balance" 
-                    :label="__('Starting Balance (RSD)')" 
+                    label="{{ __('Starting Balance (RSD)') }}" 
                     type="number"
                     step="0.01"
                     min="0"
@@ -71,10 +71,10 @@ new class extends Component {
             </div>
 
             <div class="pt-2">
-                <flux:button type="submit" variant="primary" class="btn-press w-full" wire:loading.attr="disabled">
+                <x-form.button type="submit" variant="primary" class="btn-press w-full" wire:loading.attr="disabled">
                     <span wire:loading.remove>Save Balance</span>
                     <span wire:loading>Saving...</span>
-                </flux:button>
+                </x-form.button>
             </div>
         </form>
     </div>

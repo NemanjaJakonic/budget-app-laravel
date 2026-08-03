@@ -118,6 +118,15 @@ new class extends Component {
     }
 }; ?>
 
+@php
+    $chartData = $monthlyData;
+    $maxValue = 0;
+    foreach ($chartData as $d) {
+        $maxValue = max($maxValue, $d['income'], $d['expenses']);
+    }
+    $maxValue = $maxValue > 0 ? $maxValue : 1;
+@endphp
+
 <section class="w-full page-enter">
     <div class="mx-auto w-full max-w-4xl space-y-2.5 sm:space-y-5 sm:px-0">
         {{-- Page Header --}}
@@ -157,73 +166,64 @@ new class extends Component {
         {{-- Monthly Chart --}}
         <div class="card">
             <p class="mb-3 text-sm font-medium text-zinc-300 sm:mb-4">Income vs Expenses</p>
+
             {{-- Mobile: 5-month view --}}
-            <flux:chart wire:model="mobileMonthlyData" class="sm:hidden">
-                <flux:chart.viewport class="aspect-[3/1]">
-                    <flux:chart.svg>
-                        <flux:chart.group>
-                            <flux:chart.bar field="income" class="text-emerald-500" />
-                            <flux:chart.bar field="expenses" class="text-red-500" />
-                        </flux:chart.group>
-                        <flux:chart.axis axis="x" field="month">
-                            <flux:chart.axis.tick />
-                            <flux:chart.axis.line />
-                        </flux:chart.axis>
-                        <flux:chart.axis axis="y">
-                            <flux:chart.axis.grid class="text-zinc-700" />
-                            <flux:chart.axis.tick class="text-zinc-400" />
-                        </flux:chart.axis>
-                        <flux:chart.cursor />
-                    </flux:chart.svg>
-                </flux:chart.viewport>
-                <div class="flex justify-center gap-4 pt-3">
-                    <flux:chart.legend label="Income">
-                        <flux:chart.legend.indicator class="bg-emerald-500" />
-                    </flux:chart.legend>
-                    <flux:chart.legend label="Expense">
-                        <flux:chart.legend.indicator class="bg-red-500" />
-                    </flux:chart.legend>
+            <div class="sm:hidden">
+                <div class="flex items-end gap-1.5" style="height: 140px;">
+                    @foreach ($mobileMonthlyData as $data)
+                        @php
+                            $incomeHeight = $maxValue > 0 ? ($data['income'] / $maxValue) * 120 : 0;
+                            $expenseHeight = $maxValue > 0 ? ($data['expenses'] / $maxValue) * 120 : 0;
+                        @endphp
+                        <div class="flex flex-1 flex-col items-center gap-0.5">
+                            <div class="flex items-end gap-px" style="height: 120px;">
+                                <div class="w-2.5 rounded-t bg-emerald-500/80 transition-all" style="height: {{ max(2, $incomeHeight) }}px;" title="Income: {{ number_format($data['income'], 0) }}"></div>
+                                <div class="w-2.5 rounded-t bg-red-500/80 transition-all" style="height: {{ max(2, $expenseHeight) }}px;" title="Expenses: {{ number_format($data['expenses'], 0) }}"></div>
+                            </div>
+                            <span class="text-[10px] text-zinc-500">{{ $data['month'] }}</span>
+                        </div>
+                    @endforeach
                 </div>
-                <flux:chart.tooltip>
-                    <flux:chart.tooltip.heading field="month" />
-                    <flux:chart.tooltip.value field="income" label="Income" :format="['style' => 'decimal', 'maximumFractionDigits' => 0]" suffix=" RSD" />
-                    <flux:chart.tooltip.value field="expenses" label="Expenses" :format="['style' => 'decimal', 'maximumFractionDigits' => 0]" suffix=" RSD" />
-                </flux:chart.tooltip>
-            </flux:chart>
+                <div class="flex justify-center gap-4 pt-3">
+                    <div class="flex items-center gap-1.5">
+                        <div class="h-2.5 w-2.5 rounded-sm bg-emerald-500"></div>
+                        <span class="text-xs text-zinc-400">Income</span>
+                    </div>
+                    <div class="flex items-center gap-1.5">
+                        <div class="h-2.5 w-2.5 rounded-sm bg-red-500"></div>
+                        <span class="text-xs text-zinc-400">Expense</span>
+                    </div>
+                </div>
+            </div>
 
             {{-- Desktop: full 12-month view --}}
-            <flux:chart wire:model="monthlyData" class="hidden sm:block">
-                <flux:chart.viewport class="aspect-[3/1]">
-                    <flux:chart.svg>
-                        <flux:chart.group>
-                            <flux:chart.bar field="income" class="text-emerald-500" />
-                            <flux:chart.bar field="expenses" class="text-red-500" />
-                        </flux:chart.group>
-                        <flux:chart.axis axis="x" field="month">
-                            <flux:chart.axis.tick />
-                            <flux:chart.axis.line />
-                        </flux:chart.axis>
-                        <flux:chart.axis axis="y">
-                            <flux:chart.axis.grid class="text-zinc-700" />
-                            <flux:chart.axis.tick class="text-zinc-400" />
-                        </flux:chart.axis>
-                        <flux:chart.cursor />
-                    </flux:chart.svg>
-                </flux:chart.viewport>
-                <div class="flex justify-center gap-4 pt-3">
-                    <flux:chart.legend label="Income">
-                        <flux:chart.legend.indicator class="bg-emerald-500" />
-                    </flux:chart.legend>
-                    <flux:chart.legend label="Expense">
-                        <flux:chart.legend.indicator class="bg-red-500" />
-                    </flux:chart.legend>
+            <div class="hidden sm:block">
+                <div class="flex items-end gap-2" style="height: 200px;">
+                    @foreach ($chartData as $data)
+                        @php
+                            $incomeHeight = $maxValue > 0 ? ($data['income'] / $maxValue) * 180 : 0;
+                            $expenseHeight = $maxValue > 0 ? ($data['expenses'] / $maxValue) * 180 : 0;
+                        @endphp
+                        <div class="flex flex-1 flex-col items-center gap-0.5">
+                            <div class="flex items-end gap-0.5" style="height: 180px;">
+                                <div class="w-3.5 rounded-t bg-emerald-500/80 transition-all" style="height: {{ max(2, $incomeHeight) }}px;" title="Income: {{ number_format($data['income'], 0) }} RSD"></div>
+                                <div class="w-3.5 rounded-t bg-red-500/80 transition-all" style="height: {{ max(2, $expenseHeight) }}px;" title="Expenses: {{ number_format($data['expenses'], 0) }} RSD"></div>
+                            </div>
+                            <span class="text-[11px] text-zinc-500">{{ $data['month'] }}</span>
+                        </div>
+                    @endforeach
                 </div>
-                <flux:chart.tooltip>
-                    <flux:chart.tooltip.heading field="month" />
-                    <flux:chart.tooltip.value field="income" label="Income" :format="['style' => 'decimal', 'maximumFractionDigits' => 0]" suffix=" RSD" />
-                    <flux:chart.tooltip.value field="expenses" label="Expenses" :format="['style' => 'decimal', 'maximumFractionDigits' => 0]" suffix=" RSD" />
-                </flux:chart.tooltip>
-            </flux:chart>
+                <div class="flex justify-center gap-4 pt-3">
+                    <div class="flex items-center gap-1.5">
+                        <div class="h-2.5 w-2.5 rounded-sm bg-emerald-500"></div>
+                        <span class="text-xs text-zinc-400">Income</span>
+                    </div>
+                    <div class="flex items-center gap-1.5">
+                        <div class="h-2.5 w-2.5 rounded-sm bg-red-500"></div>
+                        <span class="text-xs text-zinc-400">Expense</span>
+                    </div>
+                </div>
+            </div>
         </div>
 
         {{-- Recent Transactions --}}
@@ -231,7 +231,7 @@ new class extends Component {
             <div class="mb-3 flex items-baseline justify-between sm:mb-4">
                 <h2 class="text-sm font-medium text-zinc-300">Recent Transactions</h2>
                 @if (count($recentTransactions) > 0)
-                    <flux:link href="{{ route('transactions.index') }}" wire:navigate class="text-xs">View all</flux:link>
+                    <x-link href="{{ route('transactions.index') }}" wire:navigate class="text-xs">View all</x-link>
                 @endif
             </div>
 
@@ -255,37 +255,39 @@ new class extends Component {
                             <span class="flex-none text-sm font-semibold tabular-nums {{ $transaction['type'] === 'expense' ? 'text-red-400' : 'text-emerald-400' }}">
                                 {{ $transaction['type'] === 'expense' ? '−' : '+' }}{{ $transaction['formatted_amount'] }}
                             </span>
-                            <flux:dropdown position="bottom" align="end">
-                                <flux:button variant="ghost" size="sm" icon="ellipsis-vertical" class="opacity-0 transition-opacity group-hover:opacity-100" />
-                                <flux:menu>
-                                    <flux:menu.item :href="route('transactions.edit', $transaction['id'])" icon="pencil" wire:navigate>
+                            <x-dropdown position="bottom" align="end">
+                                <x-slot name="trigger">
+                                    <x-form.button variant="ghost" size="sm" icon="ellipsis-vertical" class="opacity-0 transition-opacity group-hover:opacity-100" />
+                                </x-slot>
+                                <x-slot name="content">
+                                    <x-menu-item :href="route('transactions.edit', $transaction['id'])" icon="pencil" wire:navigate>
                                         {{ __('Edit') }}
-                                    </flux:menu.item>
-                                    <flux:menu.item 
+                                    </x-menu-item>
+                                    <x-menu-item 
                                         wire:click="deleteTransaction({{ $transaction['id'] }})" 
                                         wire:confirm="Are you sure you want to delete this transaction?"
                                         icon="trash" 
-                                        class="text-red-400"
+                                        danger
                                     >
                                         {{ __('Delete') }}
-                                    </flux:menu.item>
-                                </flux:menu>
-                            </flux:dropdown>
+                                    </x-menu-item>
+                                </x-slot>
+                            </x-dropdown>
                         </div>
                     @endforeach
                 </div>
             @else
                 <div class="empty-state">
                     <div class="empty-state-icon">
-                        <flux:icon.banknotes class="size-6" />
+                        <x-icon name="banknotes" class="size-6" />
                     </div>
                     <div>
                         <p class="text-sm font-medium text-zinc-300">No transactions yet</p>
                         <p class="mt-0.5 text-xs text-zinc-500">Add your first transaction to get started</p>
                     </div>
-                    <flux:button href="{{ route('transactions.create') }}" variant="primary" size="sm" wire:navigate class="mt-1">
+                    <x-form.button href="{{ route('transactions.create') }}" variant="primary" size="sm" wire:navigate class="mt-1">
                         Add Transaction
-                    </flux:button>
+                    </x-form.button>
                 </div>
             @endif
         </div>

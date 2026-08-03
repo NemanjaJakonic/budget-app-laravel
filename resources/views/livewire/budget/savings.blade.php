@@ -90,11 +90,11 @@ new class extends Component {
                 <p class="mt-0.5 text-sm text-zinc-500">Track your savings over time</p>
             </div>
             <div class="w-40">
-                <flux:select wire:model.live="selectedYear">
+                <x-form.select wire:model.live="selectedYear">
                     @foreach ($years as $year)
-                        <flux:select.option value="{{ $year }}">{{ $year }}</flux:select.option>
+                        <option value="{{ $year }}">{{ $year }}</option>
                     @endforeach
-                </flux:select>
+                </x-form.select>
             </div>
         </div>
 
@@ -160,7 +160,7 @@ new class extends Component {
             @else
                 <div class="empty-state">
                     <div class="empty-state-icon">
-                        <flux:icon.chart-bar class="size-6" />
+                        <x-icon name="chart-bar" class="size-6" />
                     </div>
                     <div>
                         <p class="text-sm font-medium text-zinc-300">No transactions for {{ $selectedYear }}</p>

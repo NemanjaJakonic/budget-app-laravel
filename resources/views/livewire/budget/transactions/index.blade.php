@@ -184,9 +184,9 @@ new class extends Component {
                 <h1 class="text-xl font-semibold text-white">Transactions</h1>
                 <p class="mt-0.5 text-sm text-zinc-500">Manage your income and expenses</p>
             </div>
-            <flux:button href="{{ route('api.export-transactions') }}" variant="ghost" size="sm" icon="arrow-down-tray" class="btn-press">
+            <x-form.button href="{{ route('api.export-transactions') }}" variant="ghost" size="sm" icon="arrow-down-tray" class="btn-press">
                 Export
-            </flux:button>
+            </x-form.button>
         </div>
 
         @php($transactions = $this->getTransactions())
@@ -196,7 +196,7 @@ new class extends Component {
         <div class="sticky top-0 z-20 -mx-1 border-b border-zinc-700/50 bg-zinc-800/95 px-1 pb-3 backdrop-blur-sm">
             {{-- Search --}}
             <div class="pb-3">
-                <flux:input
+                <x-form.input
                     wire:model.live.debounce.300ms="search"
                     placeholder="Search transactions..."
                     icon="magnifying-glass"
@@ -207,37 +207,37 @@ new class extends Component {
             {{-- Filters --}}
             <div class="flex flex-wrap gap-2 pb-2.5 sm:gap-3 sm:pb-3">
                 <div class="min-w-0 flex-1">
-                    <flux:select wire:model.live="selectedType">
-                        <flux:select.option value="">All Types</flux:select.option>
+                    <x-form.select wire:model.live="selectedType">
+                        <option value="">All Types</option>
                         @foreach (Transaction::TYPES as $type)
-                            <flux:select.option value="{{ $type }}">{{ ucfirst($type) }}</flux:select.option>
+                            <option value="{{ $type }}">{{ ucfirst($type) }}</option>
                         @endforeach
-                    </flux:select>
+                    </x-form.select>
                 </div>
 
                 <div class="min-w-0 flex-1">
-                    <flux:select wire:model.live="selectedCategory">
-                        <flux:select.option value="">All Categories</flux:select.option>
+                    <x-form.select wire:model.live="selectedCategory">
+                        <option value="">All Categories</option>
                         @foreach (Transaction::CATEGORY_LABELS as $value => $label)
-                            <flux:select.option value="{{ $value }}">{{ $label }}</flux:select.option>
+                            <option value="{{ $value }}">{{ $label }}</option>
                         @endforeach
-                    </flux:select>
+                    </x-form.select>
                 </div>
 
                 <div class="min-w-0 flex-1">
-                    <flux:select wire:model.live="selectedMonth">
+                    <x-form.select wire:model.live="selectedMonth">
                         @foreach ($this->getMonths() as $value => $label)
-                            <flux:select.option value="{{ $value }}">{{ $label }}</flux:select.option>
+                            <option value="{{ $value }}">{{ $label }}</option>
                         @endforeach
-                    </flux:select>
+                    </x-form.select>
                 </div>
 
                 <div class="min-w-0 flex-1">
-                    <flux:select wire:model.live="selectedYear">
+                    <x-form.select wire:model.live="selectedYear">
                         @foreach ($this->getYears() as $value => $label)
-                            <flux:select.option value="{{ $value }}">{{ $label }}</flux:select.option>
+                            <option value="{{ $value }}">{{ $label }}</option>
                         @endforeach
-                    </flux:select>
+                    </x-form.select>
                 </div>
             </div>
 
@@ -273,29 +273,31 @@ new class extends Component {
                         <span class="flex-none text-sm font-semibold tabular-nums {{ $transaction->type === 'expense' ? 'text-red-400' : 'text-emerald-400' }}">
                             {{ $transaction->type === 'expense' ? '−' : '+' }}{{ CurrencyHelper::toRSD($transaction->getAmountInRsd($rates)) }}
                         </span>
-                        <flux:dropdown position="bottom" align="end">
-                            <flux:button variant="ghost" size="sm" icon="ellipsis-vertical" class="opacity-0 transition-opacity group-hover:opacity-100" />
-                            <flux:menu>
-                                <flux:menu.item :href="route('transactions.edit', $transaction->id)" icon="pencil" wire:navigate>
+                        <x-dropdown position="bottom" align="end">
+                            <x-slot name="trigger">
+                                <x-form.button variant="ghost" size="sm" icon="ellipsis-vertical" class="opacity-0 transition-opacity group-hover:opacity-100" />
+                            </x-slot>
+                            <x-slot name="content">
+                                <x-menu-item :href="route('transactions.edit', $transaction->id)" icon="pencil" wire:navigate>
                                     {{ __('Edit') }}
-                                </flux:menu.item>
-                                <flux:menu.item
+                                </x-menu-item>
+                                <x-menu-item
                                     wire:click="deleteTransaction({{ $transaction->id }})"
                                     wire:confirm="Are you sure you want to delete this transaction?"
                                     icon="trash"
-                                    class="text-red-400"
+                                    danger
                                 >
                                     {{ __('Delete') }}
-                                </flux:menu.item>
-                            </flux:menu>
-                        </flux:dropdown>
+                                </x-menu-item>
+                            </x-slot>
+                        </x-dropdown>
                     </div>
                 @endforeach
             </div>
         @else
             <div class="empty-state">
                 <div class="empty-state-icon">
-                    <flux:icon.magnifying-glass class="size-6" />
+                    <x-icon name="magnifying-glass" class="size-6" />
                 </div>
                 <div>
                     <p class="text-sm font-medium text-zinc-300">No transactions found</p>
@@ -311,7 +313,7 @@ new class extends Component {
                 x-intersect="$wire.loadMore()"
                 class="flex justify-center py-4 sm:py-6"
             >
-                <flux:icon.arrow-path class="size-5 animate-spin text-zinc-500" />
+                <x-icon name="arrow-path" class="size-5 animate-spin text-zinc-500" />
             </div>
         @endif
     </div>

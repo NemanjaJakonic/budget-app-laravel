@@ -4,6 +4,6 @@
 ])
 
 <div class="flex w-full flex-col text-center">
-    <flux:heading size="xl">{{ $title }}</flux:heading>
-    <flux:subheading>{{ $description }}</flux:subheading>
+    <x-heading class="text-xl">{{ $title }}</x-heading>
+    <x-subheading>{{ $description }}</x-subheading>
 </div>

@@ -43,20 +43,16 @@
                 <div class="space-y-5 text-center">
                     <div x-show="!showRecoveryInput">
                         <div class="flex items-center justify-center my-5">
-                            <flux:otp
-                                x-model="code"
-                                length="6"
-                                name="code"
+                            <x-form.otp
                                 label="OTP Code"
-                                label:sr-only
-                                class="mx-auto"
-                             />
+                                wire:model="code"
+                            />
                         </div>
                     </div>
 
                     <div x-show="showRecoveryInput">
                         <div class="my-5">
-                            <flux:input
+                            <x-form.input
                                 type="text"
                                 name="recovery_code"
                                 x-ref="recovery_code"
@@ -67,19 +63,19 @@
                         </div>
 
                         @error('recovery_code')
-                            <flux:text color="red">
+                            <p class="text-sm text-red-500">
                                 {{ $message }}
-                            </flux:text>
+                            </p>
                         @enderror
                     </div>
 
-                    <flux:button
+                    <x-form.button
                         variant="primary"
                         type="submit"
                         class="w-full"
                     >
                         {{ __('Continue') }}
-                    </flux:button>
+                    </x-form.button>
                 </div>
 
                 <div class="mt-5 space-x-0.5 text-sm leading-5 text-center">

@@ -102,9 +102,9 @@ new class extends Component {
             {{-- Name and Type --}}
             <div class="flex gap-3 sm:gap-4">
                 <div class="w-2/3">
-                    <flux:input 
+                    <x-form.input 
                         wire:model="name" 
-                        :label="__('Name')" 
+                        label="{{ __('Name') }}" 
                         placeholder="Transaction name"
                     />
                     @error('name')
@@ -112,10 +112,10 @@ new class extends Component {
                     @enderror
                 </div>
                 <div class="w-1/3">
-                    <flux:select wire:model.live="type" :label="__('Type')">
-                        <flux:select.option value="expense">Expense</flux:select.option>
-                        <flux:select.option value="income">Income</flux:select.option>
-                    </flux:select>
+                    <x-form.select wire:model.live="type" label="{{ __('Type') }}">
+                        <option value="expense">Expense</option>
+                        <option value="income">Income</option>
+                    </x-form.select>
                     @error('type')
                         <p class="mt-1 text-xs text-red-400" role="alert">{{ $message }}</p>
                     @enderror
@@ -125,12 +125,12 @@ new class extends Component {
             {{-- Category (only for expenses) --}}
             @if ($type === 'expense')
                 <div>
-                    <flux:select wire:model="category" :label="__('Category')">
-                        <flux:select.option value="">Select category</flux:select.option>
+                    <x-form.select wire:model="category" label="{{ __('Category') }}">
+                        <option value="">Select category</option>
                         @foreach (Transaction::CATEGORY_LABELS as $value => $label)
-                            <flux:select.option value="{{ $value }}">{{ $label }}</flux:select.option>
+                            <option value="{{ $value }}">{{ $label }}</option>
                         @endforeach
-                    </flux:select>
+                    </x-form.select>
                     @error('category')
                         <p class="mt-1 text-xs text-red-400" role="alert">{{ $message }}</p>
                     @enderror
@@ -140,9 +140,9 @@ new class extends Component {
             {{-- Amount and Currency --}}
             <div class="flex gap-3 sm:gap-4">
                 <div class="w-2/3">
-                    <flux:input 
+                    <x-form.input 
                         wire:model="amount" 
-                        :label="__('Amount')" 
+                        label="{{ __('Amount') }}" 
                         type="text"
                         placeholder="0.00"
                         x-mask:dynamic="$money($input, '.', '')"
@@ -152,11 +152,11 @@ new class extends Component {
                     @enderror
                 </div>
                 <div class="w-1/3">
-                    <flux:select wire:model="currency" :label="__('Currency')">
+                    <x-form.select wire:model="currency" label="{{ __('Currency') }}">
                         @foreach (Transaction::CURRENCIES as $curr)
-                            <flux:select.option value="{{ $curr }}">{{ $curr }}</flux:select.option>
+                            <option value="{{ $curr }}">{{ $curr }}</option>
                         @endforeach
-                    </flux:select>
+                    </x-form.select>
                     @error('currency')
                         <p class="mt-1 text-xs text-red-400" role="alert">{{ $message }}</p>
                     @enderror
@@ -165,9 +165,9 @@ new class extends Component {
 
             {{-- Date --}}
             <div>
-                <flux:date-picker 
+                <x-form.date-picker 
                     wire:model="date"
-                    :label="__('Date')"
+                    label="{{ __('Date') }}"
                     placeholder="Select date"
                 />
                 @error('date')
@@ -177,11 +177,11 @@ new class extends Component {
 
             {{-- Actions --}}
             <div class="flex gap-3 pt-2">
-                <flux:button type="submit" variant="primary" class="btn-press flex-1" wire:loading.attr="disabled">
+                <x-form.button type="submit" variant="primary" class="btn-press flex-1" wire:loading.attr="disabled">
                     <span wire:loading.remove>Save Changes</span>
                     <span wire:loading>Saving...</span>
-                </flux:button>
-                <flux:button 
+                </x-form.button>
+                <x-form.button 
                     type="button" 
                     variant="danger" 
                     wire:click="delete" 
@@ -189,7 +189,7 @@ new class extends Component {
                     class="btn-press"
                 >
                     Delete
-                </flux:button>
+                </x-form.button>
             </div>
         </form>
     </div>

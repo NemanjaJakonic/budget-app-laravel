@@ -38,21 +38,21 @@ new class extends Component {
 
     <x-settings.layout :heading="__('Update password')" :subheading="__('Ensure your account is using a long, random password to stay secure')">
         <form method="POST" wire:submit="updatePassword" class="mt-6 space-y-5">
-            <flux:input
+            <x-form.input
                 wire:model="current_password"
                 :label="__('Current password')"
                 type="password"
                 required
                 autocomplete="current-password"
             />
-            <flux:input
+            <x-form.input
                 wire:model="password"
                 :label="__('New password')"
                 type="password"
                 required
                 autocomplete="new-password"
             />
-            <flux:input
+            <x-form.input
                 wire:model="password_confirmation"
                 :label="__('Confirm Password')"
                 type="password"
@@ -61,9 +61,9 @@ new class extends Component {
             />
 
             <div class="flex items-center gap-4">
-                <flux:button variant="primary" type="submit" class="btn-press" data-test="update-password-button">
+                <x-form.button variant="primary" type="submit" class="btn-press" data-test="update-password-button">
                     {{ __('Save') }}
-                </flux:button>
+                </x-form.button>
 
                 <x-action-message class="me-3" on="password-updated">
                     {{ __('Saved.') }}

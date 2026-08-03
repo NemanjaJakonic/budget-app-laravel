@@ -1,10 +1,7 @@
 @import 'tailwindcss';
-@import '../../vendor/livewire/flux/dist/flux.css';
 
 @source '../views';
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
-@source '../../vendor/livewire/flux-pro/stubs/**/*.blade.php';
-@source '../../vendor/livewire/flux/stubs/**/*.blade.php';
 
 @custom-variant dark (&:where(.dark, .dark *));
 
@@ -36,22 +33,6 @@
         --color-accent-content: var(--color-teal-400);
         --color-accent-foreground: var(--color-white);
     }
-}
-
-/* Flux field spacing */
-[data-flux-field]:not(ui-radio, ui-checkbox) {
-    @apply grid gap-1.5 sm:gap-2;
-}
-
-[data-flux-label] {
-    @apply !mb-0 !leading-tight;
-}
-
-/* Refined focus rings */
-input:focus[data-flux-control],
-textarea:focus[data-flux-control],
-select:focus[data-flux-control] {
-    @apply outline-hidden ring-2 ring-accent ring-offset-2 ring-offset-accent-foreground;
 }
 
 /* ─── Card System ─── */
@@ -205,4 +186,21 @@ select:focus[data-flux-control] {
         animation-iteration-count: 1 !important;
         transition-duration: 0.01ms !important;
     }
+}
+
+/* ─── Select styling ─── */
+select {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%2371717a' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+    background-position: right 0.5rem center;
+    background-repeat: no-repeat;
+    background-size: 1.5em 1.5em;
+    padding-right: 2.5rem;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+}
+
+/* ─── Checkbox accent ─── */
+input[type="checkbox"] {
+    accent-color: var(--color-accent);
 }
