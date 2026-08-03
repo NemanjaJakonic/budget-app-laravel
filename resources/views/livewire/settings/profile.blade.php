@@ -10,18 +10,12 @@ new class extends Component {
     public string $name = '';
     public string $email = '';
 
-    /**
-     * Mount the component.
-     */
     public function mount(): void
     {
         $this->name = Auth::user()->name;
         $this->email = Auth::user()->email;
     }
 
-    /**
-     * Update the profile information for the currently authenticated user.
-     */
     public function updateProfileInformation(): void
     {
         $user = Auth::user();
@@ -50,9 +44,6 @@ new class extends Component {
         $this->dispatch('profile-updated', name: $user->name);
     }
 
-    /**
-     * Send an email verification notification to the current user.
-     */
     public function resendVerificationNotification(): void
     {
         $user = Auth::user();
@@ -69,12 +60,12 @@ new class extends Component {
     }
 }; ?>
 
-<section class="w-full">
+<section class="w-full page-enter">
     <div class="mx-auto w-full max-w-4xl space-y-6">
     @include('partials.settings-heading')
 
     <x-settings.layout :heading="__('Profile')" :subheading="__('Update your name and email address')">
-        <form wire:submit="updateProfileInformation" class="my-6 w-full space-y-6">
+        <form wire:submit="updateProfileInformation" class="my-6 w-full space-y-5">
             <flux:input wire:model="name" :label="__('Name')" type="text" required autofocus autocomplete="name" />
 
             <div>
@@ -100,11 +91,9 @@ new class extends Component {
             </div>
 
             <div class="flex items-center gap-4">
-                <div class="flex items-center justify-end">
-                    <flux:button variant="primary" type="submit" class="w-full" data-test="update-profile-button">
-                        {{ __('Save') }}
-                    </flux:button>
-                </div>
+                <flux:button variant="primary" type="submit" class="btn-press" data-test="update-profile-button">
+                    {{ __('Save') }}
+                </flux:button>
 
                 <x-action-message class="me-3" on="profile-updated">
                     {{ __('Saved.') }}

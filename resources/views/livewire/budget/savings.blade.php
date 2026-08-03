@@ -51,10 +51,8 @@ new class extends Component {
             ->get();
 
         foreach ($transactions as $transaction) {
-            // Convert amount to EUR
             $amountInEur = $transaction->getAmountInEur($this->rates);
-
-            $month = $transaction->date->month - 1; // 0-indexed
+            $month = $transaction->date->month - 1;
 
             if (!isset($this->monthlyData[$month])) {
                 $this->monthlyData[$month] = ['income' => 0, 'expense' => 0, 'savings' => 0];
@@ -83,38 +81,42 @@ new class extends Component {
     }
 }; ?>
 
-<section class="w-full">
-    <div class="mx-auto w-full max-w-4xl py-4">
-        <h1 class="pb-4 text-center text-lg font-bold text-white">Savings</h1>
-
-        {{-- Year Selector --}}
-        <div class="pb-4">
-            <flux:select wire:model.live="selectedYear" class="w-48">
-                @foreach ($years as $year)
-                    <flux:select.option value="{{ $year }}">{{ $year }}</flux:select.option>
-                @endforeach
-            </flux:select>
+<section class="w-full page-enter">
+    <div class="mx-auto w-full max-w-4xl px-4 py-4 sm:px-0">
+        {{-- Header --}}
+        <div class="flex items-center justify-between pb-4">
+            <div>
+                <h1 class="text-xl font-semibold text-white">Savings</h1>
+                <p class="mt-0.5 text-sm text-zinc-500">Track your savings over time</p>
+            </div>
+            <div class="w-40">
+                <flux:select wire:model.live="selectedYear">
+                    @foreach ($years as $year)
+                        <flux:select.option value="{{ $year }}">{{ $year }}</flux:select.option>
+                    @endforeach
+                </flux:select>
+            </div>
         </div>
 
         {{-- Yearly Summary --}}
-        <div class="mb-6 rounded-xl bg-zinc-800/40 py-4">
-            <h2 class="mb-4 text-base font-semibold text-white">Yearly Summary - {{ $selectedYear }}</h2>
-            <div class="grid grid-cols-3 gap-4">
+        <div class="card mb-5">
+            <p class="mb-4 text-sm font-medium text-zinc-300">{{ $selectedYear }} Summary</p>
+            <div class="grid grid-cols-3 gap-3">
                 <div class="rounded-lg bg-emerald-500/10 p-3">
-                    <p class="text-sm text-emerald-400">Total Income</p>
-                    <p class="text-lg font-bold text-emerald-400">
+                    <p class="text-xs font-medium uppercase tracking-wider text-emerald-500">Income</p>
+                    <p class="mt-1 text-lg font-bold tabular-nums text-emerald-400">
                         {{ CurrencyHelper::toEUR($yearlyTotal['income']) }}
                     </p>
                 </div>
                 <div class="rounded-lg bg-red-500/10 p-3">
-                    <p class="text-sm text-red-400">Total Expenses</p>
-                    <p class="text-lg font-bold text-red-400">
+                    <p class="text-xs font-medium uppercase tracking-wider text-red-500">Expenses</p>
+                    <p class="mt-1 text-lg font-bold tabular-nums text-red-400">
                         {{ CurrencyHelper::toEUR($yearlyTotal['expense']) }}
                     </p>
                 </div>
                 <div class="rounded-lg bg-blue-500/10 p-3">
-                    <p class="text-sm text-blue-400">Total Savings</p>
-                    <p class="text-lg font-bold text-blue-400">
+                    <p class="text-xs font-medium uppercase tracking-wider text-blue-500">Savings</p>
+                    <p class="mt-1 text-lg font-bold tabular-nums text-blue-400">
                         {{ CurrencyHelper::toEUR($yearlyTotal['savings']) }}
                     </p>
                 </div>
@@ -122,40 +124,49 @@ new class extends Component {
         </div>
 
         {{-- Monthly Breakdown --}}
-        <div class="rounded-xl bg-zinc-800/40 py-4">
-            <h2 class="mb-4 text-base font-semibold text-white">Monthly Breakdown</h2>
-            <div class="grid gap-4 md:grid-cols-2">
-                @foreach ($this->getMonths() as $index => $month)
-                    @if (isset($monthlyData[$index]))
-                        <div class="rounded-lg bg-zinc-900/50 p-4">
-                            <h3 class="mb-3 font-medium text-zinc-300">{{ $month }}</h3>
-                            <div class="space-y-2">
-                                <div class="flex justify-between">
-                                    <span class="text-emerald-400">Income:</span>
-                                    <span class="font-medium text-emerald-400">
-                                        {{ CurrencyHelper::toEUR($monthlyData[$index]['income']) }}
-                                    </span>
-                                </div>
-                                <div class="flex justify-between">
-                                    <span class="text-red-400">Expenses:</span>
-                                    <span class="font-medium text-red-400">
-                                        {{ CurrencyHelper::toEUR($monthlyData[$index]['expense']) }}
-                                    </span>
-                                </div>
-                                <div class="flex justify-between border-t border-zinc-700 pt-2">
-                                    <span class="text-blue-400">Savings:</span>
-                                    <span class="font-medium text-blue-400">
-                                        {{ CurrencyHelper::toEUR($monthlyData[$index]['savings']) }}
-                                    </span>
+        <div class="card">
+            <p class="mb-4 text-sm font-medium text-zinc-300">Monthly Breakdown</p>
+
+            @if (!empty($monthlyData))
+                <div class="grid gap-3 md:grid-cols-2">
+                    @foreach ($this->getMonths() as $index => $month)
+                        @if (isset($monthlyData[$index]))
+                            <div class="list-item-enter rounded-lg border border-zinc-700/40 bg-zinc-900/40 p-4" style="animation-delay: {{ $index * 30 }}ms">
+                                <h3 class="mb-2.5 text-sm font-medium text-zinc-300">{{ $month }}</h3>
+                                <div class="space-y-1.5">
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-xs text-zinc-500">Income</span>
+                                        <span class="text-sm font-medium tabular-nums text-emerald-400">
+                                            {{ CurrencyHelper::toEUR($monthlyData[$index]['income']) }}
+                                        </span>
+                                    </div>
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-xs text-zinc-500">Expenses</span>
+                                        <span class="text-sm font-medium tabular-nums text-red-400">
+                                            {{ CurrencyHelper::toEUR($monthlyData[$index]['expense']) }}
+                                        </span>
+                                    </div>
+                                    <div class="flex items-center justify-between border-t border-zinc-700/40 pt-1.5">
+                                        <span class="text-xs text-zinc-500">Savings</span>
+                                        <span class="text-sm font-semibold tabular-nums text-blue-400">
+                                            {{ CurrencyHelper::toEUR($monthlyData[$index]['savings']) }}
+                                        </span>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    @endif
-                @endforeach
-            </div>
-
-            @if (empty($monthlyData))
-                <p class="py-8 text-center text-zinc-500">No transactions for {{ $selectedYear }}</p>
+                        @endif
+                    @endforeach
+                </div>
+            @else
+                <div class="empty-state">
+                    <div class="empty-state-icon">
+                        <flux:icon.chart-bar class="size-6" />
+                    </div>
+                    <div>
+                        <p class="text-sm font-medium text-zinc-300">No transactions for {{ $selectedYear }}</p>
+                        <p class="mt-0.5 text-xs text-zinc-500">Add transactions to see your savings breakdown</p>
+                    </div>
+                </div>
             @endif
         </div>
     </div>

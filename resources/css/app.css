@@ -8,24 +8,201 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
+@theme {
+    --color-zinc-50: var(--color-gray-50);
+    --color-zinc-100: var(--color-gray-100);
+    --color-zinc-200: var(--color-gray-200);
+    --color-zinc-300: var(--color-gray-300);
+    --color-zinc-400: var(--color-gray-400);
+    --color-zinc-500: var(--color-gray-500);
+    --color-zinc-600: var(--color-gray-600);
+    --color-zinc-700: var(--color-gray-700);
+    --color-zinc-800: var(--color-gray-800);
+    --color-zinc-900: var(--color-gray-900);
+    --color-zinc-950: var(--color-gray-950);
 
-@theme {    --color-zinc-50: var(--color-gray-50);    --color-zinc-100: var(--color-gray-100);    --color-zinc-200: var(--color-gray-200);    --color-zinc-300: var(--color-gray-300);    --color-zinc-400: var(--color-gray-400);    --color-zinc-500: var(--color-gray-500);    --color-zinc-600: var(--color-gray-600);    --color-zinc-700: var(--color-gray-700);    --color-zinc-800: var(--color-gray-800);    --color-zinc-900: var(--color-gray-900);    --color-zinc-950: var(--color-gray-950);}@theme {    --color-accent: var(--color-teal-600);    --color-accent-content: var(--color-teal-600);    --color-accent-foreground: var(--color-white);}@layer theme {    .dark {        --color-accent: var(--color-teal-600);        --color-accent-content: var(--color-teal-400);        --color-accent-foreground: var(--color-white);    }}
+    --color-accent: var(--color-teal-600);
+    --color-accent-content: var(--color-teal-600);
+    --color-accent-foreground: var(--color-white);
 
+    --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+    --duration-fast: 180ms;
+    --duration-normal: 250ms;
+}
 
+@layer theme {
+    .dark {
+        --color-accent: var(--color-teal-600);
+        --color-accent-content: var(--color-teal-400);
+        --color-accent-foreground: var(--color-white);
+    }
+}
+
+/* Flux field spacing */
 [data-flux-field]:not(ui-radio, ui-checkbox) {
     @apply grid gap-2;
 }
 
 [data-flux-label] {
-    @apply  !mb-0 !leading-tight;
+    @apply !mb-0 !leading-tight;
 }
 
+/* Refined focus rings */
 input:focus[data-flux-control],
 textarea:focus[data-flux-control],
 select:focus[data-flux-control] {
     @apply outline-hidden ring-2 ring-accent ring-offset-2 ring-offset-accent-foreground;
 }
 
-/* \[:where(&)\]:size-4 {
-    @apply size-4;
-} */
+/* ─── Card System ─── */
+.card {
+    @apply rounded-xl border border-zinc-700/50 bg-zinc-800/60 p-5;
+    transition: border-color var(--duration-normal) var(--ease-out-expo),
+                box-shadow var(--duration-normal) var(--ease-out-expo),
+                transform var(--duration-fast) var(--ease-out-expo);
+}
+
+.card:hover {
+    @apply border-zinc-600/60;
+    box-shadow: 0 2px 12px rgb(0 0 0 / 0.15);
+}
+
+.card-compact {
+    @apply rounded-xl border border-zinc-700/50 bg-zinc-800/60 px-5 py-3;
+    transition: border-color var(--duration-normal) var(--ease-out-expo),
+                background-color var(--duration-normal) var(--ease-out-expo);
+}
+
+.card-compact:hover {
+    @apply border-zinc-600/60 bg-zinc-800/80;
+}
+
+/* ─── Interactive States ─── */
+.btn-press {
+    transition: transform var(--duration-fast) var(--ease-out-expo),
+                opacity var(--duration-fast) var(--ease-out-expo);
+}
+
+.btn-press:active {
+    transform: scale(0.97);
+}
+
+/* ─── List Item Transitions ─── */
+.list-item-enter {
+    animation: list-item-enter var(--duration-normal) var(--ease-out-expo) both;
+}
+
+@keyframes list-item-enter {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Stagger children */
+.stagger-children > * {
+    animation: list-item-enter var(--duration-normal) var(--ease-out-expo) both;
+}
+
+.stagger-children > *:nth-child(1) { animation-delay: 0ms; }
+.stagger-children > *:nth-child(2) { animation-delay: 40ms; }
+.stagger-children > *:nth-child(3) { animation-delay: 80ms; }
+.stagger-children > *:nth-child(4) { animation-delay: 120ms; }
+.stagger-children > *:nth-child(5) { animation-delay: 160ms; }
+.stagger-children > *:nth-child(6) { animation-delay: 200ms; }
+.stagger-children > *:nth-child(7) { animation-delay: 240ms; }
+.stagger-children > *:nth-child(8) { animation-delay: 280ms; }
+.stagger-children > *:nth-child(9) { animation-delay: 320ms; }
+.stagger-children > *:nth-child(10) { animation-delay: 360ms; }
+
+/* ─── Progress Bar ─── */
+.progress-bar-fill {
+    transition: width 600ms var(--ease-out-expo);
+}
+
+/* ─── Skeleton Loading ─── */
+.skeleton {
+    @apply rounded-md bg-zinc-700/50;
+    animation: skeleton-pulse 2s ease-in-out infinite;
+}
+
+@keyframes skeleton-pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+
+/* ─── Empty State ─── */
+.empty-state {
+    @apply flex flex-col items-center justify-center gap-3 py-12 text-center;
+}
+
+.empty-state-icon {
+    @apply flex h-14 w-14 items-center justify-center rounded-2xl bg-zinc-700/40 text-zinc-500;
+}
+
+/* ─── Toast / Flash Messages ─── */
+.toast-success {
+    @apply rounded-lg border border-emerald-500/30 bg-emerald-500/10 px-4 py-3 text-sm text-emerald-400;
+}
+
+.toast-error {
+    @apply rounded-lg border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-400;
+}
+
+/* ─── Subtle Page Transition ─── */
+@starting-style {
+    .page-enter {
+        opacity: 0;
+        transform: translateY(4px);
+    }
+}
+
+.page-enter {
+    animation: page-enter var(--duration-normal) var(--ease-out-expo) both;
+}
+
+@keyframes page-enter {
+    from {
+        opacity: 0;
+        transform: translateY(4px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ─── Bottom Nav ─── */
+.bottom-nav-item {
+    @apply relative flex flex-1 flex-col items-center justify-center gap-1 px-2 py-2 text-xs;
+    transition: color var(--duration-fast) var(--ease-out-expo);
+}
+
+.bottom-nav-item::after {
+    content: '';
+    @apply absolute -bottom-0.5 left-1/2 h-0.5 w-0 rounded-full bg-emerald-400;
+    transform: translateX(-50%);
+    transition: width var(--duration-normal) var(--ease-out-expo);
+}
+
+.bottom-nav-item[data-active]::after {
+    @apply w-4;
+}
+
+/* ─── Focus Visible ─── */
+*:focus-visible {
+    @apply outline-2 outline-offset-2 outline-accent;
+}
+
+/* ─── Reduce Motion ─── */
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}

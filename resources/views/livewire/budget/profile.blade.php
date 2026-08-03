@@ -40,15 +40,17 @@ new class extends Component {
     }
 }; ?>
 
-<section class="w-full">
-    <div class="mx-auto w-full max-w-xl">
-        <h1 class="pb-4 text-center text-lg font-bold text-white">Budget Profile</h1>
+<section class="w-full page-enter">
+    <div class="mx-auto w-full max-w-xl px-4 sm:px-0">
+        {{-- Header --}}
+        <div class="pb-5">
+            <h1 class="text-xl font-semibold text-white">Budget Profile</h1>
+            <p class="mt-0.5 text-sm text-zinc-500">Set your starting balance for calculations</p>
+        </div>
 
-        <form wire:submit="save" class="rounded-xl bg-zinc-800/40 space-y-6">
+        <form wire:submit="save" class="card space-y-5">
             @if (session('message'))
-                <div class="rounded bg-emerald-500/20 p-3 text-sm text-emerald-400">
-                    {{ session('message') }}
-                </div>
+                <div class="toast-success">{{ session('message') }}</div>
             @endif
 
             <div>
@@ -60,17 +62,17 @@ new class extends Component {
                     min="0"
                     placeholder="0.00"
                 />
-                <p class="mt-1 text-xs text-zinc-500">
-                    Enter your initial balance in RSD. This is used to calculate your total balance.
+                <p class="mt-2 text-xs text-zinc-500">
+                    Enter your initial balance in RSD. This is used to calculate your total balance across all transactions.
                 </p>
                 @error('starting_balance')
-                    <span class="text-xs text-red-400">{{ $message }}</span>
+                    <p class="mt-1 text-xs text-red-400" role="alert">{{ $message }}</p>
                 @enderror
             </div>
 
-            <div class="pt-4">
-                <flux:button type="submit" variant="primary" class="w-full" wire:loading.attr="disabled">
-                    <span wire:loading.remove>Save</span>
+            <div class="pt-2">
+                <flux:button type="submit" variant="primary" class="btn-press w-full" wire:loading.attr="disabled">
+                    <span wire:loading.remove>Save Balance</span>
                     <span wire:loading>Saving...</span>
                 </flux:button>
             </div>

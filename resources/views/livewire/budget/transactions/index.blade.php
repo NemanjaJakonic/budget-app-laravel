@@ -176,23 +176,26 @@ new class extends Component {
     }
 }; ?>
 
-<section class="w-full">
-    <div class="mx-auto w-full max-w-4xl py-4">
+<section class="w-full page-enter">
+    <div class="mx-auto w-full max-w-4xl px-4 py-4 sm:px-0">
+        {{-- Header --}}
         <div class="flex items-center justify-between pb-4">
-            <h1 class="text-lg font-bold text-white">All Transactions</h1>
-            <a href="{{ route('api.export-transactions') }}" class="flex items-center gap-2 rounded bg-emerald-500 px-4 py-2 text-sm text-white transition-colors hover:bg-emerald-600">
-                <flux:icon.arrow-down-tray class="size-5" />
-                Export to Excel
-            </a>
+            <div>
+                <h1 class="text-xl font-semibold text-white">Transactions</h1>
+                <p class="mt-0.5 text-sm text-zinc-500">Manage your income and expenses</p>
+            </div>
+            <flux:button href="{{ route('api.export-transactions') }}" variant="ghost" size="sm" icon="arrow-down-tray" class="btn-press">
+                Export
+            </flux:button>
         </div>
 
         @php($transactions = $this->getTransactions())
         @php($totals = $this->getTotals())
 
         {{-- Search, filters & summary (sticky while scrolling the list) --}}
-        <div class="sticky top-0 z-20 -mx-1 border-zinc-700/50 border-b bg-zinc-800/95 px-1 pb-4 backdrop-blur-sm">
+        <div class="sticky top-0 z-20 -mx-1 border-b border-zinc-700/50 bg-zinc-800/95 px-1 pb-4 backdrop-blur-sm">
             {{-- Search --}}
-            <div class="pb-4">
+            <div class="pb-3">
                 <flux:input
                     wire:model.live.debounce.300ms="search"
                     placeholder="Search transactions..."
@@ -202,7 +205,7 @@ new class extends Component {
             </div>
 
             {{-- Filters --}}
-            <div class="flex flex-wrap gap-4 pb-4">
+            <div class="flex flex-wrap gap-3 pb-3">
                 <div class="min-w-0 flex-1">
                     <flux:select wire:model.live="selectedType">
                         <flux:select.option value="">All Types</flux:select.option>
@@ -238,58 +241,68 @@ new class extends Component {
                 </div>
             </div>
 
-            {{-- Totals Summary (RSD) --}}
+            {{-- Totals Summary --}}
             @if ($transactions->isNotEmpty())
-                <div class="border-zinc-700/50 border-t pt-4 flex items-center justify-between">
-                    <p class="text-sm font-semibold text-zinc-300">Summary (RSD)</p>
-                    <p class="text-sm font-semibold pr-12 {{ $totals['netRsd'] >= 0 ? 'text-emerald-400' : 'text-red-400' }}">{{ $totals['netRsd'] < 0 ? '-' : '' }}{{ CurrencyHelper::toRSD(abs($totals['netRsd'])) }}</p>
+                <div class="flex items-center justify-between border-t border-zinc-700/50 pt-3">
+                    <p class="text-xs font-medium uppercase tracking-wider text-zinc-500">Net (RSD)</p>
+                    <p class="text-sm font-semibold tabular-nums {{ $totals['netRsd'] >= 0 ? 'text-emerald-400' : 'text-red-400' }}">
+                        {{ $totals['netRsd'] < 0 ? '−' : '' }}{{ CurrencyHelper::toRSD(abs($totals['netRsd'])) }}
+                    </p>
                 </div>
             @endif
         </div>
 
         {{-- Transactions List --}}
-        <div class="space-y-3 pt-4">
-            @forelse ($transactions as $transaction)
-                <div wire:key="txn-{{ $transaction->id }}" class="flex items-center gap-4 rounded-xl bg-zinc-800/40 py-2">
-                    <div class="flex-1">
-                        <a href="{{ route('transactions.edit', $transaction->id) }}" class="text-sm text-white hover:text-emerald-400" wire:navigate>
-                            {{ $transaction->name }}
-                        </a>
-                        <p class="text-xs text-zinc-400">
-                            {{ $transaction->date->format('l, j M Y') }}
-                            @if ($transaction->category_label)
-                                <span class="ml-2 rounded bg-emerald-500/20 px-1.5 py-0.5 text-xs text-emerald-400">
-                                    {{ $transaction->category_label }}
-                                </span>
-                            @endif
-                        </p>
+        @if ($transactions->isNotEmpty())
+            <div class="space-y-1 pt-3">
+                @foreach ($transactions as $transaction)
+                    <div wire:key="txn-{{ $transaction->id }}" class="list-item-enter group flex items-center gap-4 rounded-lg px-3 py-2.5 transition-colors hover:bg-zinc-700/40" style="animation-delay: {{ $loop->index * 30 }}ms">
+                        <div class="min-w-0 flex-1">
+                            <a href="{{ route('transactions.edit', $transaction->id) }}" class="text-sm font-medium text-white transition-colors group-hover:text-emerald-400" wire:navigate>
+                                {{ $transaction->name }}
+                            </a>
+                            <p class="mt-0.5 text-xs text-zinc-500">
+                                {{ $transaction->date->format('l, j M Y') }}
+                                @if ($transaction->category_label)
+                                    <span class="ml-1.5 inline-flex items-center rounded-md bg-zinc-700/60 px-1.5 py-0.5 text-[10px] font-medium uppercase tracking-wide text-zinc-400">
+                                        {{ $transaction->category_label }}
+                                    </span>
+                                @endif
+                            </p>
+                        </div>
+                        <span class="flex-none text-sm font-semibold tabular-nums {{ $transaction->type === 'expense' ? 'text-red-400' : 'text-emerald-400' }}">
+                            {{ $transaction->type === 'expense' ? '−' : '+' }}{{ CurrencyHelper::toRSD($transaction->getAmountInRsd($rates)) }}
+                        </span>
+                        <flux:dropdown position="bottom" align="end">
+                            <flux:button variant="ghost" size="sm" icon="ellipsis-vertical" class="opacity-0 transition-opacity group-hover:opacity-100" />
+                            <flux:menu>
+                                <flux:menu.item :href="route('transactions.edit', $transaction->id)" icon="pencil" wire:navigate>
+                                    {{ __('Edit') }}
+                                </flux:menu.item>
+                                <flux:menu.item
+                                    wire:click="deleteTransaction({{ $transaction->id }})"
+                                    wire:confirm="Are you sure you want to delete this transaction?"
+                                    icon="trash"
+                                    class="text-red-400"
+                                >
+                                    {{ __('Delete') }}
+                                </flux:menu.item>
+                            </flux:menu>
+                        </flux:dropdown>
                     </div>
-                    <span class="flex-none text-right text-sm font-semibold {{ $transaction->type === 'expense' ? 'text-red-400' : 'text-emerald-400' }}">
-                        {{ $transaction->type === 'expense' ? '-' : '' }}{{ CurrencyHelper::toRSD($transaction->getAmountInRsd($rates)) }}
-                    </span>
-                    <flux:dropdown position="bottom" align="end">
-                        <flux:button variant="ghost" size="sm" icon="ellipsis-vertical" />
-                        <flux:menu>
-                            <flux:menu.item :href="route('transactions.edit', $transaction->id)" icon="pencil" wire:navigate>
-                                {{ __('Edit') }}
-                            </flux:menu.item>
-                            <flux:menu.item
-                                wire:click="deleteTransaction({{ $transaction->id }})"
-                                wire:confirm="Are you sure you want to delete this transaction?"
-                                icon="trash"
-                                class="text-red-400"
-                            >
-                                {{ __('Delete') }}
-                            </flux:menu.item>
-                        </flux:menu>
-                    </flux:dropdown>
+                @endforeach
+            </div>
+        @else
+            <div class="empty-state">
+                <div class="empty-state-icon">
+                    <flux:icon.magnifying-glass class="size-6" />
                 </div>
-            @empty
-                <div class="py-8 text-center text-zinc-500">
-                    No transactions found for the selected filters
+                <div>
+                    <p class="text-sm font-medium text-zinc-300">No transactions found</p>
+                    <p class="mt-0.5 text-xs text-zinc-500">Try adjusting your filters or search term</p>
                 </div>
-            @endforelse
-        </div>
+            </div>
+        @endif
 
         {{-- Infinite Scroll Sentinel --}}
         @if ($transactions->hasMorePages())
@@ -298,7 +311,7 @@ new class extends Component {
                 x-intersect="$wire.loadMore()"
                 class="flex justify-center py-6"
             >
-                <flux:icon.arrow-path class="size-5 animate-spin text-zinc-400" />
+                <flux:icon.arrow-path class="size-5 animate-spin text-zinc-500" />
             </div>
         @endif
     </div>

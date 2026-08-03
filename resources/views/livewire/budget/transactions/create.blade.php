@@ -131,12 +131,16 @@ new class extends Component {
     }
 }; ?>
 
-<section class="w-full">
-    <div class="mx-auto w-full max-w-xl">
-        <h1 class="pb-4 text-center text-lg font-bold text-white">Add Transaction</h1>
+<section class="w-full page-enter">
+    <div class="mx-auto w-full max-w-xl px-4 sm:px-0">
+        {{-- Header --}}
+        <div class="pb-5">
+            <h1 class="text-xl font-semibold text-white">Add Transaction</h1>
+            <p class="mt-0.5 text-sm text-zinc-500">Record a new income or expense</p>
+        </div>
 
         {{-- Input Mode Toggle --}}
-        <div class="mb-6 flex justify-center">
+        <div class="mb-5 flex justify-center">
             <flux:tabs variant="segmented" wire:model.live="inputMode">
                 <flux:tab name="standard">Standard</flux:tab>
                 <flux:tab name="voice">Voice</flux:tab>
@@ -146,7 +150,7 @@ new class extends Component {
         {{-- Voice Input Section --}}
         @if ($inputMode === 'voice')
             <div 
-                class="mb-6 rounded-xl bg-zinc-800/40 p-6"
+                class="card mb-5"
                 x-data="{
                     isRecording: false,
                     transcript: @entangle('voiceTranscript'),
@@ -185,7 +189,6 @@ new class extends Component {
                             };
                             
                             this.recognition.onend = () => {
-                                // Auto-restart if still supposed to be recording (handles browser timeouts)
                                 if (this.shouldRestart && this.isRecording) {
                                     try {
                                         this.recognition.start();
@@ -200,28 +203,21 @@ new class extends Component {
                             };
                             
                             this.recognition.onerror = (event) => {
-                                console.error('Speech recognition error:', event.error);
-                                
-                                // Handle specific errors
-                                if (event.error === 'no-speech') {
-                                    return; // Keep listening
-                                }
-                                if (event.error === 'aborted') {
-                                    return; // Manual stop
+                                if (event.error === 'no-speech' || event.error === 'aborted') {
+                                    return;
                                 }
                                 if (event.error === 'network') {
-                                    this.errorMessage = 'Network error: Speech recognition requires internet connection. Please use the text input below instead.';
+                                    this.errorMessage = 'Network error: Speech recognition requires internet. Use text input below instead.';
                                     this.isRecording = false;
                                     this.shouldRestart = false;
                                     return;
                                 }
                                 if (event.error === 'not-allowed') {
-                                    this.errorMessage = 'Microphone access denied. Please allow microphone access in your browser settings.';
+                                    this.errorMessage = 'Microphone access denied. Allow microphone access in your browser settings.';
                                     this.isRecording = false;
                                     this.shouldRestart = false;
                                     return;
                                 }
-                                
                                 this.errorMessage = 'Speech recognition error: ' + event.error;
                                 this.isRecording = false;
                                 this.shouldRestart = false;
@@ -239,7 +235,6 @@ new class extends Component {
                             this.recognition.start();
                             this.isRecording = true;
                         } catch (e) {
-                            console.error('Failed to start recording:', e);
                             this.errorMessage = 'Failed to start recording. Please try again.';
                         }
                     },
@@ -265,9 +260,9 @@ new class extends Component {
                     }
                 }"
             >
-                {{-- Error Message Display --}}
+                {{-- Error Message --}}
                 <template x-if="errorMessage">
-                    <div class="mb-4 rounded bg-amber-500/20 p-3 text-sm text-amber-400" x-text="errorMessage"></div>
+                    <div class="toast-error mb-4" x-text="errorMessage"></div>
                 </template>
 
                 <template x-if="isSupported && isSecureContext">
@@ -277,8 +272,9 @@ new class extends Component {
                             <button
                                 type="button"
                                 @click="toggleRecording()"
-                                class="relative flex h-20 w-20 items-center justify-center rounded-full transition-all duration-300"
-                                :class="isRecording ? 'bg-red-500 animate-pulse' : 'bg-zinc-700 hover:bg-zinc-600'"
+                                class="btn-press relative flex h-20 w-20 items-center justify-center rounded-full transition-all"
+                                :class="isRecording ? 'bg-red-500 shadow-lg shadow-red-500/20' : 'bg-zinc-700 hover:bg-zinc-600'"
+                                :aria-label="isRecording ? 'Stop recording' : 'Start recording'"
                             >
                                 <svg x-show="!isRecording" class="h-8 w-8 text-white" fill="currentColor" viewBox="0 0 24 24">
                                     <path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z"/>
@@ -287,42 +283,44 @@ new class extends Component {
                                 <svg x-show="isRecording" class="h-8 w-8 text-white" fill="currentColor" viewBox="0 0 24 24">
                                     <rect x="6" y="6" width="12" height="12" rx="2"/>
                                 </svg>
+                                @if (false)
+                                    <span class="absolute -bottom-0.5 -right-0.5 h-3 w-3 rounded-full bg-red-400 animate-pulse"></span>
+                                @endif
                             </button>
                         </div>
                         
                         <p class="text-center text-sm text-zinc-400">
-                            <span x-show="!isRecording">Click to start recording</span>
-                            <span x-show="isRecording" class="text-red-400">Listening... Click to stop</span>
+                            <span x-show="!isRecording">Tap to start recording</span>
+                            <span x-show="isRecording" class="text-red-400">Listening... tap to stop</span>
                         </p>
                         
                         {{-- Transcript Display --}}
-                        <div x-show="transcript || interimTranscript" class="rounded-lg bg-zinc-900/50 p-4">
-                            <p class="text-sm text-zinc-400 mb-1">Transcript:</p>
-                            <p class="text-white">
+                        <div x-show="transcript || interimTranscript" x-transition class="rounded-lg bg-zinc-900/50 p-4">
+                            <p class="mb-1 text-xs font-medium uppercase tracking-wider text-zinc-500">Transcript</p>
+                            <p class="text-sm text-white">
                                 <span x-text="transcript"></span>
                                 <span x-text="interimTranscript" class="text-zinc-500 italic"></span>
                             </p>
                         </div>
                         
                         {{-- Parse Button --}}
-                        <div x-show="transcript && !isRecording" class="flex justify-center">
+                        <div x-show="transcript && !isRecording" x-transition class="flex justify-center">
                             <flux:button 
                                 type="button" 
                                 variant="primary" 
                                 @click="parseTranscript()"
                                 wire:loading.attr="disabled"
                                 wire:target="parseVoiceInput"
+                                class="btn-press"
                             >
                                 <span wire:loading.remove wire:target="parseVoiceInput">Parse & Fill Form</span>
                                 <span wire:loading wire:target="parseVoiceInput">Parsing...</span>
                             </flux:button>
                         </div>
                         
-                        {{-- Text input fallback after network error --}}
-                        <div x-show="errorMessage" class="mt-4 space-y-4 border-t border-zinc-700 pt-4">
-                            <p class="text-center text-sm text-zinc-400">
-                                Or type your transaction:
-                            </p>
+                        {{-- Text input fallback --}}
+                        <div x-show="errorMessage" x-transition class="mt-4 space-y-3 border-t border-zinc-700/50 pt-4">
+                            <p class="text-center text-sm text-zinc-400">Or type your transaction:</p>
                             <flux:input 
                                 x-model="transcript"
                                 placeholder="e.g., coffee 250 dinars food"
@@ -334,6 +332,7 @@ new class extends Component {
                                     @click="parseTranscript()"
                                     wire:loading.attr="disabled"
                                     wire:target="parseVoiceInput"
+                                    class="btn-press"
                                 >
                                     <span wire:loading.remove wire:target="parseVoiceInput">Parse & Fill Form</span>
                                     <span wire:loading wire:target="parseVoiceInput">Parsing...</span>
@@ -343,7 +342,7 @@ new class extends Component {
                     </div>
                 </template>
                 
-                {{-- Fallback for unsupported browsers or insecure context --}}
+                {{-- Fallback for unsupported browsers --}}
                 <template x-if="!isSupported || !isSecureContext">
                     <div class="space-y-4">
                         <p class="text-center text-sm text-zinc-400" x-show="!isSecureContext">
@@ -363,6 +362,7 @@ new class extends Component {
                                 wire:click="parseVoiceInput($wire.voiceTranscript)"
                                 wire:loading.attr="disabled"
                                 wire:target="parseVoiceInput"
+                                class="btn-press"
                             >
                                 <span wire:loading.remove wire:target="parseVoiceInput">Parse & Fill Form</span>
                                 <span wire:loading wire:target="parseVoiceInput">Parsing...</span>
@@ -371,20 +371,16 @@ new class extends Component {
                     </div>
                 </template>
                 
-                {{-- Voice Error Display --}}
+                {{-- Voice Error --}}
                 @if ($voiceError)
-                    <div class="mt-4 rounded bg-red-500/20 p-3 text-sm text-red-400">
-                        {{ $voiceError }}
-                    </div>
+                    <div class="toast-error mt-4">{{ $voiceError }}</div>
                 @endif
             </div>
         @endif
 
-        <form wire:submit="save" class="rounded-xl bg-zinc-800/40 space-y-6">
+        <form wire:submit="save" class="card space-y-5">
             @if (session('message'))
-                <div class="rounded bg-emerald-500/20 p-3 text-sm text-emerald-400">
-                    {{ session('message') }}
-                </div>
+                <div class="toast-success">{{ session('message') }}</div>
             @endif
 
             {{-- Name and Type --}}
@@ -397,7 +393,7 @@ new class extends Component {
                         autofocus
                     />
                     @error('name')
-                        <span class="text-xs text-red-400">{{ $message }}</span>
+                        <p class="mt-1 text-xs text-red-400" role="alert">{{ $message }}</p>
                     @enderror
                 </div>
                 <div class="w-1/3">
@@ -406,7 +402,7 @@ new class extends Component {
                         <flux:select.option value="income">Income</flux:select.option>
                     </flux:select>
                     @error('type')
-                        <span class="text-xs text-red-400">{{ $message }}</span>
+                        <p class="mt-1 text-xs text-red-400" role="alert">{{ $message }}</p>
                     @enderror
                 </div>
             </div>
@@ -421,10 +417,11 @@ new class extends Component {
                         @endforeach
                     </flux:select>
                     @error('category')
-                        <span class="text-xs text-red-400">{{ $message }}</span>
+                        <p class="mt-1 text-xs text-red-400" role="alert">{{ $message }}</p>
                     @enderror
                 </div>
             @endif
+
             {{-- Amount and Currency --}}
             <div class="flex gap-4">
                 <div class="w-2/3">
@@ -436,7 +433,7 @@ new class extends Component {
                         x-mask:dynamic="$money($input, '.', '')"
                     />
                     @error('amount')
-                        <span class="text-xs text-red-400">{{ $message }}</span>
+                        <p class="mt-1 text-xs text-red-400" role="alert">{{ $message }}</p>
                     @enderror
                 </div>
                
@@ -447,7 +444,7 @@ new class extends Component {
                         @endforeach
                     </flux:select>
                     @error('currency')
-                        <span class="text-xs text-red-400">{{ $message }}</span>
+                        <p class="mt-1 text-xs text-red-400" role="alert">{{ $message }}</p>
                     @enderror
                 </div>
             </div>
@@ -460,14 +457,14 @@ new class extends Component {
                     placeholder="Select date"
                 />
                 @error('date')
-                    <span class="text-xs text-red-400">{{ $message }}</span>
+                    <p class="mt-1 text-xs text-red-400" role="alert">{{ $message }}</p>
                 @enderror
             </div>
 
             {{-- Submit --}}
-            <div class="pt-4">
-                <flux:button type="submit" variant="primary" class="w-full" wire:loading.attr="disabled">
-                    <span wire:loading.remove>Submit</span>
+            <div class="pt-2">
+                <flux:button type="submit" variant="primary" class="btn-press w-full" wire:loading.attr="disabled">
+                    <span wire:loading.remove>Save Transaction</span>
                     <span wire:loading>Saving...</span>
                 </flux:button>
             </div>

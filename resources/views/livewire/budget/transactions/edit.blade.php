@@ -86,15 +86,17 @@ new class extends Component {
     }
 }; ?>
 
-<section class="w-full">
-    <div class="mx-auto w-full max-w-xl">
-        <h1 class="pb-4 text-center text-lg font-bold text-white">Edit Transaction</h1>
+<section class="w-full page-enter">
+    <div class="mx-auto w-full max-w-xl px-4 sm:px-0">
+        {{-- Header --}}
+        <div class="pb-5">
+            <h1 class="text-xl font-semibold text-white">Edit Transaction</h1>
+            <p class="mt-0.5 text-sm text-zinc-500">Update or delete this transaction</p>
+        </div>
 
-        <form wire:submit="save" class="rounded-xl bg-zinc-800/40 space-y-6">
+        <form wire:submit="save" class="card space-y-5">
             @if (session('message'))
-                <div class="rounded bg-emerald-500/20 p-3 text-sm text-emerald-400">
-                    {{ session('message') }}
-                </div>
+                <div class="toast-success">{{ session('message') }}</div>
             @endif
 
             {{-- Name and Type --}}
@@ -106,7 +108,7 @@ new class extends Component {
                         placeholder="Transaction name"
                     />
                     @error('name')
-                        <span class="text-xs text-red-400">{{ $message }}</span>
+                        <p class="mt-1 text-xs text-red-400" role="alert">{{ $message }}</p>
                     @enderror
                 </div>
                 <div class="w-1/3">
@@ -115,7 +117,7 @@ new class extends Component {
                         <flux:select.option value="income">Income</flux:select.option>
                     </flux:select>
                     @error('type')
-                        <span class="text-xs text-red-400">{{ $message }}</span>
+                        <p class="mt-1 text-xs text-red-400" role="alert">{{ $message }}</p>
                     @enderror
                 </div>
             </div>
@@ -130,7 +132,7 @@ new class extends Component {
                         @endforeach
                     </flux:select>
                     @error('category')
-                        <span class="text-xs text-red-400">{{ $message }}</span>
+                        <p class="mt-1 text-xs text-red-400" role="alert">{{ $message }}</p>
                     @enderror
                 </div>
             @endif
@@ -146,7 +148,7 @@ new class extends Component {
                         x-mask:dynamic="$money($input, '.', '')"
                     />
                     @error('amount')
-                        <span class="text-xs text-red-400">{{ $message }}</span>
+                        <p class="mt-1 text-xs text-red-400" role="alert">{{ $message }}</p>
                     @enderror
                 </div>
                 <div class="w-1/3">
@@ -156,7 +158,7 @@ new class extends Component {
                         @endforeach
                     </flux:select>
                     @error('currency')
-                        <span class="text-xs text-red-400">{{ $message }}</span>
+                        <p class="mt-1 text-xs text-red-400" role="alert">{{ $message }}</p>
                     @enderror
                 </div>
             </div>
@@ -169,14 +171,14 @@ new class extends Component {
                     placeholder="Select date"
                 />
                 @error('date')
-                    <span class="text-xs text-red-400">{{ $message }}</span>
+                    <p class="mt-1 text-xs text-red-400" role="alert">{{ $message }}</p>
                 @enderror
             </div>
 
             {{-- Actions --}}
-            <div class="flex gap-4 pt-4">
-                <flux:button type="submit" variant="primary" class="flex-1" wire:loading.attr="disabled">
-                    <span wire:loading.remove>Update</span>
+            <div class="flex gap-3 pt-2">
+                <flux:button type="submit" variant="primary" class="btn-press flex-1" wire:loading.attr="disabled">
+                    <span wire:loading.remove>Save Changes</span>
                     <span wire:loading>Saving...</span>
                 </flux:button>
                 <flux:button 
@@ -184,6 +186,7 @@ new class extends Component {
                     variant="danger" 
                     wire:click="delete" 
                     wire:confirm="Are you sure you want to delete this transaction?"
+                    class="btn-press"
                 >
                     Delete
                 </flux:button>

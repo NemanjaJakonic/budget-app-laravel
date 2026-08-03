@@ -150,7 +150,7 @@ test('it shows empty state when no transactions match', function () {
     Volt::test('budget.transactions.index')
         ->set('selectedMonth', 0)
         ->set('selectedYear', 0)
-        ->assertSee('No transactions found for the selected filters');
+        ->assertSee('No transactions found');
 });
 
 test('it only shows transactions for the authenticated user', function () {
@@ -193,9 +193,7 @@ test('it shows totals summary for filtered transactions', function () {
     Volt::test('budget.transactions.index')
         ->set('selectedMonth', 0)
         ->set('selectedYear', 0)
-        ->assertSee('Summary')
-        ->assertSee('Income')
-        ->assertSee('Expenses')
+        ->assertSee('Net (RSD)')
         ->assertSee('Net');
 });
 
