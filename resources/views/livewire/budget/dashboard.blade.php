@@ -119,7 +119,7 @@ new class extends Component {
 }; ?>
 
 <section class="w-full page-enter">
-    <div class="mx-auto w-full max-w-4xl space-y-2.5 px-3 sm:space-y-5 sm:px-0">
+    <div class="mx-auto w-full max-w-4xl space-y-2.5 sm:space-y-5 sm:px-0">
         {{-- Page Header --}}
         <div class="pt-1 sm:pt-2">
             <h1 class="text-xl font-semibold text-white">Dashboard</h1>

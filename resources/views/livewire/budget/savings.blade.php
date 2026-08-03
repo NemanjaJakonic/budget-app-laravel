@@ -82,7 +82,7 @@ new class extends Component {
 }; ?>
 
 <section class="w-full page-enter">
-    <div class="mx-auto w-full max-w-4xl px-3 py-3 sm:px-0 sm:py-4">
+    <div class="mx-auto w-full max-w-4xl py-3 sm:px-0 sm:py-4">
         {{-- Header --}}
         <div class="flex items-center justify-between pb-3 sm:pb-4">
             <div>

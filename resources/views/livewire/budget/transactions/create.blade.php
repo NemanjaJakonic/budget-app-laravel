@@ -132,7 +132,7 @@ new class extends Component {
 }; ?>
 
 <section class="w-full page-enter">
-    <div class="mx-auto w-full max-w-xl px-3 sm:px-0">
+    <div class="mx-auto w-full max-w-xl sm:px-0">
         {{-- Header --}}
         <div class="pb-3 sm:pb-5">
             <h1 class="text-xl font-semibold text-white">Add Transaction</h1>
