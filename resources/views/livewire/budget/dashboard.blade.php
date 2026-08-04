@@ -257,7 +257,7 @@ new class extends Component {
                             </span>
                             <x-dropdown position="bottom" align="end">
                                 <x-slot name="trigger">
-                                    <x-form.button variant="ghost" size="sm" icon="ellipsis-vertical" class="opacity-0 transition-opacity group-hover:opacity-100" />
+                                    <x-form.button variant="ghost" size="sm" icon="ellipsis-vertical" class="text-zinc-500 transition-colors hover:text-white" />
                                 </x-slot>
                                 <x-slot name="content">
                                     <x-menu-item :href="route('transactions.edit', $transaction['id'])" icon="pencil" wire:navigate>
