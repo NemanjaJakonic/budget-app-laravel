@@ -256,8 +256,8 @@ new class extends Component {
         @if ($transactions->isNotEmpty())
             <div class="space-y-1 pt-3">
                 @foreach ($transactions as $transaction)
-                    <div wire:key="txn-{{ $transaction->id }}" class="list-item-enter group flex items-center gap-3 rounded-lg px-2.5 py-2 transition-colors hover:bg-zinc-700/40 sm:gap-4 sm:px-3 sm:py-2.5" style="animation-delay: {{ $loop->index * 30 }}ms">
-                        <div class="min-w-0 flex-1">
+                    <div wire:key="txn-{{ $transaction->id }}" class="list-item-enter group flex items-center rounded-lg py-2 transition-colors hover:bg-zinc-700/40 sm:py-2.5" style="animation-delay: {{ $loop->index * 30 }}ms">
+                        <div class="min-w-0 flex-1 px-2.5 sm:px-3">
                             <a href="{{ route('transactions.edit', $transaction->id) }}" class="text-sm font-medium text-white transition-colors group-hover:text-emerald-400" wire:navigate>
                                 {{ $transaction->name }}
                             </a>
@@ -270,7 +270,7 @@ new class extends Component {
                                 @endif
                             </p>
                         </div>
-                        <span class="flex-none text-sm font-semibold tabular-nums {{ $transaction->type === 'expense' ? 'text-red-400' : 'text-emerald-400' }}">
+                        <span class="flex-none pr-1 text-sm font-semibold tabular-nums {{ $transaction->type === 'expense' ? 'text-red-400' : 'text-emerald-400' }}">
                             {{ $transaction->type === 'expense' ? '−' : '+' }}{{ CurrencyHelper::toRSD($transaction->getAmountInRsd($rates)) }}
                         </span>
                         <x-dropdown position="bottom" align="end">
