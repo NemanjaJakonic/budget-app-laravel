@@ -39,6 +39,10 @@
                 </button>
             </div>
         @elseif($clearable)
+            @php
+                $wireModel = $attributes->wire('model')->value();
+                $wireProp = str($wireModel)->before('.')->toString();
+            @endphp
             <div x-data="{ value: @entangle($attributes->wire('model')) }" class="relative">
                 <input
                     {{ $attributes->merge([
@@ -47,7 +51,7 @@
                     ]) }}
                     x-model="value"
                 />
-                <button type="button" x-show="value" @click="$wire.set('{{ $attributes->wire('model') }}', ''); value = ''" class="absolute inset-y-0 right-0 flex items-center pr-3 text-zinc-500 hover:text-zinc-300">
+                <button type="button" x-show="value" @click="$wire.set('{{ $wireProp }}', ''); value = ''" class="absolute inset-y-0 right-0 flex items-center pr-3 text-zinc-500 hover:text-zinc-300">
                     <x-icon name="x-mark" class="size-4" />
                 </button>
             </div>
