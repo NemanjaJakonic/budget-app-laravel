@@ -23,10 +23,10 @@
             }
 
             if ('{{ $align }}' === 'end') {
-                panel.style.right = (window.innerWidth - rect.right) + 'px';
+                panel.style.right = (window.innerWidth - rect.left + gap) + 'px';
                 panel.style.left = 'auto';
             } else {
-                panel.style.left = rect.left + 'px';
+                panel.style.left = rect.right + gap + 'px';
                 panel.style.right = 'auto';
             }
         }
